@@ -39,18 +39,15 @@ export class AuthService {
     };
   }
 
-  public  login({ id }: UserPayload): LoggedInUser {
+  public login({ id }: UserPayload): LoggedInUser {
     const payload: JwtPayload = { id };
     return {
       id,
-      accessToken:  this.jwtService.sign(payload),
+      accessToken: this.jwtService.sign(payload),
     };
   }
 
-  public getUser(id :string ) : User{
-     const by =  { id };
-     this.userRepository.findUser(id);
+  public getUser(by: { id: string }): Promise<Optional<User>> {
+    return this.userRepository.findUser(by);
   }
-
-
 }
