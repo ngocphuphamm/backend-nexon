@@ -39,11 +39,18 @@ export class AuthService {
     };
   }
 
-  public async login({ id }: UserPayload): LoggedInUser {
+  public  login({ id }: UserPayload): LoggedInUser {
     const payload: JwtPayload = { id };
     return {
       id,
-      accessToken: this.jwtService.sign(payload),
+      accessToken:  this.jwtService.sign(payload),
     };
   }
+
+  public getUser(id :string ) : User{
+     const by =  { id };
+     this.userRepository.findUser(id);
+  }
+
+
 }
