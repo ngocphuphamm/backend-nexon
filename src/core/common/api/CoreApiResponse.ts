@@ -1,5 +1,5 @@
-import { Code } from './code/Code';
-import { Nullable } from '../type/CommonType';
+import { Code } from '@core/common/code/Code';
+import { Nullable } from '@core/common/type/CommonTypes';
 
 export class CoreApiResponse<TData> {
   public readonly code: number;
@@ -10,13 +10,14 @@ export class CoreApiResponse<TData> {
 
   public readonly data: Nullable<TData>;
 
+    
   private constructor(code: number, message: string, data?: TData) {
-    this.code = code;
-    this.message = message;
-    this.data = data || null;
+    this.code      = code;
+    this.message   = message;
+    this.data      = data || null;
     this.timestamp = Date.now();
   }
-
+  
   public static success<TData>(
     data?: TData,
     message?: string,

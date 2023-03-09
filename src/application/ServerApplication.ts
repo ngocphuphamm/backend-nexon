@@ -1,5 +1,5 @@
-import { RootModule } from './di/.RootModule';
-import { ApiServerConfig } from '../infrastructure/config/ApiServerConfig';
+import { RootModule } from '@application/di/.RootModule';
+import { ApiServerConfig } from '@infrastructure/config/ApiServerConfig';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -21,9 +21,9 @@ export class ServerApplication {
   }
 
   private buildAPIDocumentation(app: NestExpressApplication): void {
-    const title = 'IPoster';
-    const description = 'IPoster API documentation';
-    const version = '1.0.0';
+    const title: string = 'To Do List';
+    const description: string = 'To Do List API documentation';
+    const version: string = '1.0.0';
 
     const options: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
       .setTitle(title)
