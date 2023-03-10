@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 
 export class User extends Entity<string> {
   @IsString()
-  private username: string;
+  private readonly username: string;
 
   @IsEmail()
   private readonly email: string;

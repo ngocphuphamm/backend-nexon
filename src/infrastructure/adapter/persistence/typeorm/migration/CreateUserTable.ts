@@ -16,7 +16,6 @@ export class CreateUserTable implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE public."user";');
-    await queryRunner.query('DROP TYPE USER_ROLE_ENUM;');
+    await queryRunner.query('DROP TABLE public."Users";');
   }
 }

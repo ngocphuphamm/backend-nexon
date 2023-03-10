@@ -29,6 +29,19 @@ CREATE TABLE Task_Assignments (
   created_at TIMESTAMP NOT NULL,
 );
 
+CREATE TABLE Api_Keys (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    key_value VARCHAR(255) NOT NULL,
+    version VARCHAR(50) NOT NULL,
+    permissions ENUM('GENERAL', 'VIP') NOT NULL,
+    comments TEXT,
+    status ENUM('ACTIVE', 'INACTIVE') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+
 -- add primary key to Tasks table
 ALTER TABLE Tasks
 ADD PRIMARY KEY (id);

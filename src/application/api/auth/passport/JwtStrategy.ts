@@ -10,7 +10,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
 @Injectable()
-export class HttpJwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromHeader(
@@ -30,7 +30,6 @@ export class HttpJwtStrategy extends PassportStrategy(Strategy) {
     return {
       id: user.getId(),
       email: user.getEmail(),
-      username: user.getUserName(),
     };
   }
 }

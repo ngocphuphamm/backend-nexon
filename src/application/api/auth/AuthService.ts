@@ -1,29 +1,30 @@
-import { Injectable } from '@nestjs/common';
-import { UserDITokens } from '../../../core/domain/user/di/UserDIToken';
 import {
   JwtPayload,
   LoggedInUser,
   UserPayload,
 } from '@application/api/auth/type/AuthTypes';
-import { JwtService } from '@nestjs/jwt';
-import { UserRepositoryPort } from '@core/domain/user/port/persistence/UserRepositoryPort';
-import { Nullable, Optional } from '../../../core/common/type/CommonTypes';
+import { Nullable, Optional } from '@core/common/type/CommonTypes';
+import { UserDITokens } from '@core/domain/user/di/UserDIToken';
 import { User } from '@core/domain/user/entity/User';
+import { UserRepositoryPort } from '@core/domain/user/port/persistence/UserRepositoryPort';
+import { Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+
 @Injectable()
 export class AuthService {
   constructor(
-    @Injectable(UserDITokens.UserRepository)
+    @Inject(UserDITokens.UserRepository)
     private readonly userRepository: UserRepositoryPort,
 
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   public async validateUser(
-    username: string,
-    password: string,
+    email: string,
+    password: string
   ): Promise<Nullable<UserPayload>> {
     const user: Optional<User> = await this.userRepository.findUser({
-      email: username,
+      email: email,
     });
 
     if (!user) return null;
@@ -34,20 +35,19 @@ export class AuthService {
 
     return {
       id: user.getId(),
-      username: user.getUserName(),
       email: user.getEmail(),
     };
   }
 
-  public login({ id }: UserPayload): LoggedInUser {
-    const payload: JwtPayload = { id };
+  public login(user: UserPayload): LoggedInUser {
+    const payload: JwtPayload = { id: user.id };
     return {
-      id,
+      id: user.id,
       accessToken: this.jwtService.sign(payload),
     };
   }
 
-  public getUser(by: { id: string }): Promise<Optional<User>> {
+  public async getUser(by: { id: string }): Promise<Optional<User>> {
     return this.userRepository.findUser(by);
   }
 }
