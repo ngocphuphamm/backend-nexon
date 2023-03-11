@@ -22,6 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   public async validate(payload: JwtPayload): Promise<UserPayload> {
+    console.log('vao jwt');
     const user: User = CoreAssert.notEmpty(
       await this.authService.getUser({ id: payload.id }),
       Exception.new({ code: Code.UNAUTHORIZED_ERROR }),

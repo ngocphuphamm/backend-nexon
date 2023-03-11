@@ -1,3 +1,6 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+
 import {
   JwtPayload,
   LoggedInUser,
@@ -7,8 +10,6 @@ import { Nullable, Optional } from '@core/common/type/CommonTypes';
 import { UserDITokens } from '@core/domain/user/di/UserDIToken';
 import { User } from '@core/domain/user/entity/User';
 import { UserRepositoryPort } from '@core/domain/user/port/persistence/UserRepositoryPort';
-import { Inject, Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {

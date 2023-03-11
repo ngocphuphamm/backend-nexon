@@ -4,10 +4,10 @@ import { Optional } from '@core/common/type/CommonTypes';
 import { User } from '@core/domain/user/entity/User';
 import { UserRepositoryPort } from '@core/domain/user/port/persistence/UserRepositoryPort';
 import { GetUserPort } from '@core/domain/user/port/usecase/GetUserPort';
-import { GetUserCase } from '@core/domain/user/usecase/GetUserUseCase';
+import { GetUserUseCase } from '@core/domain/user/usecase/GetUserUseCase';
 import { UserUseCaseDto } from '@core/domain/user/usecase/dto/UserUseCaseDto';
 
-export class GetUserService implements GetUserCase {
+export class GetUserService implements GetUserUseCase {
   constructor(private readonly userRepository: UserRepositoryPort) {}
 
   public async execute(payload: GetUserPort): Promise<UserUseCaseDto> {

@@ -6,6 +6,7 @@ import { IsDate, IsEmail, IsOptional, IsString } from 'class-validator';
 import { v4 } from 'uuid';
 
 export class User extends Entity<string> {
+
   @IsString()
   private readonly username: string;
 
@@ -18,9 +19,8 @@ export class User extends Entity<string> {
   @IsDate()
   private readonly createdAt: Date;
 
-  @IsOptional()
   @IsDate()
-  private updatedAt: Nullable<Date>;
+  private readonly updatedAt: Date;
 
   constructor(payload: CreateUserEntityPayload) {
     super();
@@ -31,7 +31,7 @@ export class User extends Entity<string> {
     this.password = payload.password;
 
     this.createdAt = payload.createdAt || new Date();
-    this.updatedAt = payload.updatedAt || null;
+    this.updatedAt = payload.updatedAt || new Date();
   }
 
   public getUserName(): string {
@@ -64,4 +64,13 @@ export class User extends Entity<string> {
   public async comparePassword(password: string): Promise<boolean> {
     return compare(password, this.password);
   }
+
+  public static async new(payload: CreateUserEntityPayload): Promise<User> {
+    const user: User = new User(payload);
+    await user.hashPassword();
+    await user.validate();
+    
+    return user;
+  }
+  
 }

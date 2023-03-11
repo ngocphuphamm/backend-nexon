@@ -51,10 +51,10 @@ if (ApiServerConfig.LOG_ENABLE) {
       username                 : DatabaseConfig.DB_USERNAME,
       password                 : DatabaseConfig.DB_PASSWORD,
       database                 : DatabaseConfig.DB_NAME,
-      // entities                 : [`${TypeOrmDirectory}/entity/**/*{.ts,.js}`],
+      entities                 : [`${TypeOrmDirectory}/entity/**/*{.ts,.js}`],
       // migrationsRun            : true,
       // migrations               : [`${TypeOrmDirectory}/migration/**/*{.ts,.js}`],
-      migrationsTransactionMode: 'all',
+      // migrationsTransactionMode: 'all',
       synchronize: true,
     })
   ],

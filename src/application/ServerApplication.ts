@@ -14,6 +14,10 @@ export class ServerApplication {
     const app: NestExpressApplication =
       await NestFactory.create<NestExpressApplication>(RootModule);
 
+
+    app.setGlobalPrefix('api/v1'); // Set the global prefix to /api/v1
+    app.enableCors();
+
     this.buildAPIDocumentation(app);
     this.log();
 
@@ -44,7 +48,7 @@ export class ServerApplication {
   private log(): void {
     Logger.log(
       `Server started on host: ${this.host}; port: ${this.port};`,
-      ServerApplication.name,
+      ServerApplication.name
     );
   }
 

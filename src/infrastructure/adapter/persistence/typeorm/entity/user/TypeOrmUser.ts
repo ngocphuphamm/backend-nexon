@@ -1,23 +1,23 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity('user')
+
+@Entity('users')
 export class TypeOrmUser {
-  
-  @PrimaryColumn()
-  public id: string;
-  
-  @Column()
-  public username: string;
-  
-  @Column()
-  public email: string;
-  
-  @Column()
-  public password: string;
+  @PrimaryColumn({ length: 36 })
+    id: string;
+
+  @Column({ length: 155 })
+    username: string;
+
+  @Column({ length: 155 })
+    email: string;
+
+  @Column({ length: 255 })
+    password: string;
 
   @Column()
-  public createdAt: Date;
+    createdAt: Date;
 
   @Column()
-  public updatedAt: Date;
+    updatedAt: Date;
 }

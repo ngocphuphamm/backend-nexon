@@ -24,7 +24,7 @@
     "@typescript-eslint/typedef": ["error", {
       "memberVariableDeclaration": true,
       "propertyDeclaration": true,
-      "variableDeclaration": true,
+      "variableDeclaration": false,
       "variableDeclarationIgnoreFunction": true,
       "arrowParameter": false
     }],
