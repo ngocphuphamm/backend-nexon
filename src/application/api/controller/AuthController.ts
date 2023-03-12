@@ -6,6 +6,7 @@ import {
   Req,
   UseGuards,
   Body,
+  Inject,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
@@ -20,16 +21,19 @@ import { ResponseUser } from '@application/api/controller/documentation/user/Res
 import { UserUseCaseDto } from '@core/domain/user/usecase/dto/UserUseCaseDto';
 import { CreateUserAdapter } from '@infrastructure/adapter/usecase/user/CreateUserAdapter';
 import { CreateUserUseCase } from '@core/domain/user/usecase/CreateUserUseCase';
+import { UserDITokens } from '@core/domain/user/di/UserDIToken';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+
+    @Inject(UserDITokens.CreateUserUseCase)
     private readonly createUserUseCase: CreateUserUseCase
   ) {}
 
-  @Post('')
+  @Post('/')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginBody })
@@ -37,7 +41,8 @@ export class AuthController {
   public async login(
     @Req() req: RequestWithUser
   ): Promise<CoreApiResponse<LoggedInUser>> {
-    return CoreApiResponse.success(this.authService.login(req.user));
+    const data: LoggedInUser = await this.authService.login(req.user);
+    return CoreApiResponse.success(data);
   }
 
   @Post('register')

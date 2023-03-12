@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 import {
   JwtPayload,
@@ -16,6 +17,9 @@ export class AuthService {
   constructor(
     @Inject(UserDITokens.UserRepository)
     private readonly userRepository: UserRepositoryPort,
+
+    @InjectRedis() 
+    private readonly redis: Redis,
 
     private readonly jwtService: JwtService
   ) {}
@@ -40,15 +44,32 @@ export class AuthService {
     };
   }
 
-  public login(user: UserPayload): LoggedInUser {
-    const payload: JwtPayload = { id: user.id };
+  public async login(user: UserPayload): Promise<LoggedInUser> {
+    const [accessToken, refreshToken] = await this.generateToken(user);
     return {
       id: user.id,
-      accessToken: this.jwtService.sign(payload),
+      accessToken,
+      refreshToken
     };
   }
 
   public async getUser(by: { id: string }): Promise<Optional<User>> {
     return this.userRepository.findUser(by);
+  }
+
+  private async generateToken({id, email}: UserPayload) {
+    const payload = { id: id, email: email };
+    const accessToken = await this.jwtService.sign(payload);
+    const refreshToken = await this.jwtService.sign(payload, {
+      expiresIn: '7d',
+    });
+    // Store the refresh token in Redis
+    await this.redis.set(
+      refreshToken,
+      id,
+      'PX',
+      60 * 60 * 24 * 7 * 1000 + 60 * 15 * 1000 // TTL of 7 days and 15 minutes
+    );
+    return [accessToken, refreshToken];
   }
 }

@@ -4,6 +4,10 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
+import * as compression from 'compression';
+
+import helmet from 'helmet';
 
 export class ServerApplication {
   private readonly host: string = ApiServerConfig.HOST;
@@ -14,10 +18,14 @@ export class ServerApplication {
     const app: NestExpressApplication =
       await NestFactory.create<NestExpressApplication>(RootModule);
 
-
     app.setGlobalPrefix('api/v1'); // Set the global prefix to /api/v1
+
+    // GLOBAL MIDDLEWARES
     app.enableCors();
 
+    app.use(cookieParser());
+    app.use(helmet());
+    app.use(compression());
     this.buildAPIDocumentation(app);
     this.log();
 

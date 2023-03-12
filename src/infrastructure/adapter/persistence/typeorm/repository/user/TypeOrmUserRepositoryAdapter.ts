@@ -24,7 +24,7 @@ export class TypeOrmUserRepositoryAdapter
 
     this.extendQueryWithByProperties(by, query);
 
-    const ormEntity: Optional<TypeOrmUser> = await query.getOne();
+    const ormEntity: Optional<TypeOrmUser | null> = await query.getOne();
 
     if (ormEntity) {
       domainEntity = TypeOrmUserMapper.toDomainEntity(ormEntity);

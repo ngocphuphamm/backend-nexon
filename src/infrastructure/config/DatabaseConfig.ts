@@ -17,4 +17,7 @@ export class DatabaseConfig {
 
   public static readonly DB_NAME: string = get('DB_NAME').required().asString();
 
+  public static readonly REDIS_URL: string = get('REDIS_URL')
+    .required()
+    .asString();
 }
