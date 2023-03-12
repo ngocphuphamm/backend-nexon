@@ -22,7 +22,8 @@ import { UserUseCaseDto } from '@core/domain/user/usecase/dto/UserUseCaseDto';
 import { CreateUserAdapter } from '@infrastructure/adapter/usecase/user/CreateUserAdapter';
 import { CreateUserUseCase } from '@core/domain/user/usecase/CreateUserUseCase';
 import { UserDITokens } from '@core/domain/user/di/UserDIToken';
-
+import { RefreshTokenBody } from '@application/api/controller/documentation/auth/RefreshToken';
+import { ResponseToken } from '@application/api/controller/documentation/auth/ResponseToken';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
@@ -33,11 +34,11 @@ export class AuthController {
     private readonly createUserUseCase: CreateUserUseCase
   ) {}
 
-  @Post('/')
+  @Post('')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginBody })
-  @ApiResponse({ status: HttpStatus.OK, type: LoginBody })
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseToken })
   public async login(
     @Req() req: RequestWithUser
   ): Promise<CoreApiResponse<LoggedInUser>> {
@@ -64,5 +65,16 @@ export class AuthController {
     );
 
     return CoreApiResponse.success(createdUser);
+  }
+
+  @Post('refreshToken')
+  @HttpCode(HttpStatus.OK)
+  @ApiBody({ type: RefreshTokenBody })
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseToken })
+  public async refreshToken(
+    @Body() body: RefreshTokenBody
+  ): Promise<CoreApiResponse<string>> {
+    const data: string = await this.authService.refreshToken(body.refreshToken);
+    return CoreApiResponse.success(data);
   }
 }

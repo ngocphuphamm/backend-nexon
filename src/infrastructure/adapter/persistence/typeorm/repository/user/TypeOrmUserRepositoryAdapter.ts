@@ -70,7 +70,7 @@ export class TypeOrmUserRepositoryAdapter
   ): void {
     switch (true) {
     case Boolean(by.id):
-      query.andWhere(`"${this.userAlias}"."id" = :id`, { id: by.id });
+      query.andWhere(`${this.userAlias}.id = :id`, { id: by.id });
       break;
     case Boolean(by.email):
       query.andWhere(`${this.userAlias}.email = :email`, {

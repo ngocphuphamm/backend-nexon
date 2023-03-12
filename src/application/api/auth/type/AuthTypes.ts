@@ -17,3 +17,4 @@ export type LoggedInUser = {
   accessToken: string;
   refreshToken: string;
 };
+

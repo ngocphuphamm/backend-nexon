@@ -11,6 +11,9 @@ import { Nullable, Optional } from '@core/common/type/CommonTypes';
 import { UserDITokens } from '@core/domain/user/di/UserDIToken';
 import { User } from '@core/domain/user/entity/User';
 import { UserRepositoryPort } from '@core/domain/user/port/persistence/UserRepositoryPort';
+import { CoreAssert } from '@core/common/utils/assert/CoreAssert';
+import { Exception } from '@core/common/exception/Exception';
+import { Code } from '@core/common/code/Code';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +21,7 @@ export class AuthService {
     @Inject(UserDITokens.UserRepository)
     private readonly userRepository: UserRepositoryPort,
 
-    @InjectRedis() 
+    @InjectRedis()
     private readonly redis: Redis,
 
     private readonly jwtService: JwtService
@@ -49,15 +52,52 @@ export class AuthService {
     return {
       id: user.id,
       accessToken,
-      refreshToken
+      refreshToken,
     };
+  }
+
+  public async refreshToken(
+    refreshToken: string
+  ): Promise<string> {
+    const verifiedJWt = await this.jwtService.verify(refreshToken);
+    await CoreAssert.isTrue(
+      verifiedJWt,
+      Exception.new({
+        code: Code.UNAUTHORIZED_ERROR,
+        overrideMessage: 'Invalid refresh token',
+      })
+    );
+    const userId = await this.redis.get(refreshToken);
+    console.log(userId);
+    await CoreAssert.notEmpty(
+      userId,
+      Exception.new({
+        code: Code.BAD_REQUEST_ERROR,
+        overrideMessage: 'refresh token doesn" t exist in Redis',
+      })
+    );
+
+    const user: Optional<User> = await this.getUser({ id: userId });
+    await CoreAssert.notEmpty(
+      user,
+      Exception.new({
+        code: Code.BAD_REQUEST_ERROR,
+        overrideMessage: 'user not exist',
+      })
+    );
+
+    const accessToken = await this.jwtService.sign({
+      id: user?.getId,
+      email: user?.getEmail(),
+    });
+    return accessToken;
   }
 
   public async getUser(by: { id: string }): Promise<Optional<User>> {
     return this.userRepository.findUser(by);
   }
 
-  private async generateToken({id, email}: UserPayload) {
+  private async generateToken({ id, email }: UserPayload) {
     const payload = { id: id, email: email };
     const accessToken = await this.jwtService.sign(payload);
     const refreshToken = await this.jwtService.sign(payload, {
