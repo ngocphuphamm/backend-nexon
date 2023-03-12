@@ -56,9 +56,7 @@ export class AuthService {
     };
   }
 
-  public async refreshToken(
-    refreshToken: string
-  ): Promise<string> {
+  public async refreshToken(refreshToken: string): Promise<string> {
     const verifiedJWt = await this.jwtService.verify(refreshToken);
     await CoreAssert.isTrue(
       verifiedJWt,
@@ -67,8 +65,10 @@ export class AuthService {
         overrideMessage: 'Invalid refresh token',
       })
     );
+
+    await this.isTokenBlacklisted(refreshToken);
+
     const userId = await this.redis.get(refreshToken);
-    console.log(userId);
     await CoreAssert.notEmpty(
       userId,
       Exception.new({
@@ -93,6 +93,17 @@ export class AuthService {
     return accessToken;
   }
 
+  public async logout(refreshToken: string): Promise<void> {
+    const blacklisted = await this.isTokenBlacklisted(refreshToken);
+    if (!blacklisted) {
+      await this.redis.set(refreshToken, 'blacklisted');
+      await this.redis.expire(
+        refreshToken,
+        60 * 60 * 24 * 7 * 1000 + 60 * 15 * 1000 // TTL of 7 days and 15 minutes
+      );
+    }
+  }
+
   public async getUser(by: { id: string }): Promise<Optional<User>> {
     return this.userRepository.findUser(by);
   }
@@ -111,5 +122,16 @@ export class AuthService {
       60 * 60 * 24 * 7 * 1000 + 60 * 15 * 1000 // TTL of 7 days and 15 minutes
     );
     return [accessToken, refreshToken];
+  }
+
+  private async isTokenBlacklisted(token: string): Promise<boolean> {
+    const isTokenBlacklisted = await this.redis.get(token);
+    if (isTokenBlacklisted) {
+      throw Exception.new({
+        code: Code.UNAUTHORIZED_ERROR,
+        overrideMessage: 'Token in blacklist ',
+      });
+    }
+    return false;
   }
 }

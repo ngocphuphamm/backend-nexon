@@ -6,7 +6,7 @@ import {
   Req,
   UseGuards,
   Body,
-  Inject,
+  Inject
 } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
@@ -24,6 +24,8 @@ import { CreateUserUseCase } from '@core/domain/user/usecase/CreateUserUseCase';
 import { UserDITokens } from '@core/domain/user/di/UserDIToken';
 import { RefreshTokenBody } from '@application/api/controller/documentation/auth/RefreshToken';
 import { ResponseToken } from '@application/api/controller/documentation/auth/ResponseToken';
+import { ResponseLogout } from './documentation/auth/Logout';
+import { JwtAuthGuard } from '@application/api/auth/guard/JwtAuthGuard';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
@@ -76,5 +78,19 @@ export class AuthController {
   ): Promise<CoreApiResponse<string>> {
     const data: string = await this.authService.refreshToken(body.refreshToken);
     return CoreApiResponse.success(data);
+  }
+
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseLogout })
+  public async logout(
+    @Body() body: RefreshTokenBody
+  ): Promise<CoreApiResponse<ResponseLogout>> {
+    await this.authService.logout(body.refreshToken);
+    return CoreApiResponse.success({
+      description: 'Logout successfully'
+    });
   }
 }

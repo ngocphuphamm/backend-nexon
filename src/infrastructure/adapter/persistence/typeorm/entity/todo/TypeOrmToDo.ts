@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('todos')
-export class Todo {
+export class TypeOrmToDo {
   @PrimaryColumn({ length: 36 })
     id: string;
 
@@ -12,10 +12,10 @@ export class Todo {
     description: string;
 
   @Column({ type: 'datetime', nullable: true })
-    start_time: Date;
+    startTime: Date;
 
   @Column({ type: 'datetime', nullable: true })
-    end_time: Date;
+    endTime: Date;
 
   @Column({ type: 'enum', enum: ['to do', 'in progress', 'done'] })
     status: string;
@@ -24,7 +24,7 @@ export class Todo {
     priority: string;
 
   @Column({ length: 36 })
-    user_id: string;
+    userId: string;
 
   @CreateDateColumn()
     createdAt: Date;

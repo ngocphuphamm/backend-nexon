@@ -50,10 +50,12 @@ FOREIGN KEY (user_id)
 REFERENCES users(id);
 
 
+
+-- create index
 CREATE INDEX idx_user_id ON todos (user_id);
 
 
-
+-- create trigger
 DELIMITER //
 
 CREATE TRIGGER validate_todos_info BEFORE INSERT ON todos

@@ -13,16 +13,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super({
-      jwtFromRequest: ExtractJwt.fromHeader(
-        ApiServerConfig.ACCESS_TOKEN_HEADER,
-      ),
-      ignoreExpiration: false,
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: ApiServerConfig.ACCESS_TOKEN_SECRET,
     });
   }
 
   public async validate(payload: JwtPayload): Promise<UserPayload> {
-    console.log('vao jwt');
     const user: User = CoreAssert.notEmpty(
       await this.authService.getUser({ id: payload.id }),
       Exception.new({ code: Code.UNAUTHORIZED_ERROR }),
