@@ -3,6 +3,6 @@ import { AuthModule } from './AuthModule';
 import { ToDoModule } from './ToDoModule';
 import { InfrastructureModule } from '@application/di/InfrastructureModule';
 @Module({
-  imports: [AuthModule, InfrastructureModule,ToDoModule],
+  imports: [AuthModule, InfrastructureModule],
 })
 export class RootModule {}
