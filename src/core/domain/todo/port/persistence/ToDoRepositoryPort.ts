@@ -12,4 +12,6 @@ export interface ToDoRepositoryPort {
     by: { id?: string },
     options?: RepositoryFindOptions
   ): Promise<Optional<ToDo>>;
+  updateToDo(toDo: ToDo): Promise<void>;
+
 }

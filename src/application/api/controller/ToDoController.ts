@@ -31,7 +31,10 @@ import { Code } from '@core/common/code/Code';
 import { Exception } from '@core/common/exception/Exception';
 import { GetToDoUseCase } from '@core/domain/todo/usecase/GetToDoUseCase';
 import { GetToDoAdapter } from '@infrastructure/adapter/usecase/todo/GetToDoAdapter';
-
+import { EditToDoAdapter } from '@infrastructure/adapter/usecase/todo/EditToDoAdapter';
+import { EditToDoBody } from '@application/api/controller/documentation/todo/EditToDoBody';
+import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
+import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 @ApiTags('todos')
@@ -41,7 +44,10 @@ export class ToDoController {
     private readonly createToDoUseCase: CreateToDoUseCase,
 
     @Inject(ToDoDITokens.GetToDoUseCase)
-    private readonly getToDoUseCase: GetToDoUseCase
+    private readonly getToDoUseCase: GetToDoUseCase,
+
+    @Inject(ToDoDITokens.EditToDoUseCase)
+    private readonly editToDoUseCase: EditToDoUseCase
   ) {}
 
   @Post()
@@ -103,5 +109,41 @@ export class ToDoController {
     } catch (err) {
       return ResponseException(err, response);
     }
+  }
+
+  @Put(':toDoId')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiBody({ type: EditToDoBody })
+  @ApiResponse({ status: HttpStatus.OK, type: EditToDoBody })
+  public async editPost(
+    @HttpUser() user: UserPayload,
+    @Body() body: EditToDoBody,
+    @Param('toDoId') toDoId: string
+  ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
+    const data: EditToDoPort = (({
+      title,
+      description,
+      startTime,
+      endTime,
+      status,
+      priority,
+    }: EditToDoBody) => ({
+      executorId: user.id,
+      toDoId,
+      title,
+      description,
+      startTime: startTime ? new Date(startTime) : undefined,
+      endTime: endTime ? new Date(endTime) : undefined,
+      status,
+      priority,
+    }))(body);
+    const adapter: EditToDoAdapter = await EditToDoAdapter.new(data);
+
+    const editedToDo: ToDoUseCaseDto = await this.editToDoUseCase.execute(
+      adapter
+    );
+
+    return CoreApiResponse.success(editedToDo);
   }
 }

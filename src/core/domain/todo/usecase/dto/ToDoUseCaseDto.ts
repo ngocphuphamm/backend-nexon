@@ -20,6 +20,14 @@ export class ToDoUseCaseDto {
   @Expose()
   public status: ToDoStatus;
 
+
+  @Expose()
+  public startTime: Date;
+
+
+  @Expose()
+  public endTime: Date;
+
   @Expose()
   public priority: ToDoPriority;
 

@@ -98,4 +98,10 @@ export class TypeOrmToDoRepositoryAdapter
       break;
     }
   }
+
+    
+  public async updateToDo(toDo: ToDo): Promise<void>{
+    const ormToDo: TypeOrmToDo = TypeOrmToDoMapper.toOrmEntity(toDo);
+    await this.update(ormToDo.id, ormToDo);
+  }
 }
