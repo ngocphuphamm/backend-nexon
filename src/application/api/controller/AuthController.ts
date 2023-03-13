@@ -6,7 +6,8 @@ import {
   Req,
   UseGuards,
   Body,
-  Inject
+  Res,
+  Inject,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
 
@@ -26,6 +27,10 @@ import { RefreshTokenBody } from '@application/api/controller/documentation/auth
 import { ResponseToken } from '@application/api/controller/documentation/auth/ResponseToken';
 import { ResponseLogout } from './documentation/auth/Logout';
 import { JwtAuthGuard } from '@application/api/auth/guard/JwtAuthGuard';
+import { Response, response } from 'express';
+import { Code } from '../../../core/common/code/Code';
+import { Exception } from '../../../core/common/exception/Exception';
+import { ResponseException } from '../../../core/common/exception/ResponseException';
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
@@ -42,10 +47,18 @@ export class AuthController {
   @ApiBody({ type: LoginBody })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToken })
   public async login(
-    @Req() req: RequestWithUser
-  ): Promise<CoreApiResponse<LoggedInUser>> {
-    const data: LoggedInUser = await this.authService.login(req.user);
-    return CoreApiResponse.success(data);
+    @Req() req: RequestWithUser,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<LoggedInUser>>> {
+    try {
+      const data: LoggedInUser = await this.authService.login(req.user);
+      return response
+        .status(Code.SUCCESS.code)
+        .json(CoreApiResponse.success(data));
+    } catch (err) {
+      console.log(err);
+      return ResponseException(err, response);
+    }
   }
 
   @Post('register')
@@ -53,20 +66,27 @@ export class AuthController {
   @ApiBody({ type: RegisterBody })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseUser })
   public async createAccount(
-    @Body() body: RegisterBody
-  ): Promise<CoreApiResponse<UserUseCaseDto>> {
-    const adapter: CreateUserAdapter = await CreateUserAdapter.new(
-      (({ username, email, password }: RegisterBody) => ({
-        username,
-        email,
-        password,
-      }))(body)
-    );
-    const createdUser: UserUseCaseDto = await this.createUserUseCase.execute(
-      adapter
-    );
+    @Body() body: RegisterBody,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<UserUseCaseDto>>> {
+    try {
+      const adapter: CreateUserAdapter = await CreateUserAdapter.new(
+        (({ username, email, password }: RegisterBody) => ({
+          username,
+          email,
+          password,
+        }))(body)
+      );
+      const createdUser: UserUseCaseDto = await this.createUserUseCase.execute(
+        adapter
+      );
 
-    return CoreApiResponse.success(createdUser);
+      return response
+        .status(Code.SUCCESS.code)
+        .json(CoreApiResponse.success(createdUser));
+    } catch (err) {
+      return ResponseException(err, response);
+    }
   }
 
   @Post('refreshToken')
@@ -74,23 +94,39 @@ export class AuthController {
   @ApiBody({ type: RefreshTokenBody })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToken })
   public async refreshToken(
-    @Body() body: RefreshTokenBody
-  ): Promise<CoreApiResponse<string>> {
-    const data: string = await this.authService.refreshToken(body.refreshToken);
-    return CoreApiResponse.success(data);
+    @Body() body: RefreshTokenBody,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<string>>> {
+    try {
+      const data: string = await this.authService.refreshToken(
+        body.refreshToken
+      );
+      return response
+        .status(Code.SUCCESS.code)
+        .json(CoreApiResponse.success(data));
+    } catch (error) {
+      return ResponseException(error, response);
+    }
   }
-
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @ApiResponse({ status: HttpStatus.OK, type: ResponseLogout })
   public async logout(
-    @Body() body: RefreshTokenBody
-  ): Promise<CoreApiResponse<ResponseLogout>> {
-    await this.authService.logout(body.refreshToken);
-    return CoreApiResponse.success({
-      description: 'Logout successfully'
-    });
+    @Body() body: RefreshTokenBody,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<ResponseLogout>>> {
+    try {
+      await this.authService.logout(body.refreshToken);
+      return response.status(Code.SUCCESS.code).json(
+        CoreApiResponse.success({
+          description: 'Logout successfully',
+        })
+      );
+    } catch (err) {
+      console.log(err);
+      return ResponseException(err, response);
+    }
   }
 }

@@ -3,16 +3,16 @@ export class GetUserPreviewQueryResult {
   
   public readonly id: string;
   
-  public readonly username: string;
+  public readonly email: string;
   
   
-  constructor(id: string, name: string) {
+  constructor(id: string, email: string) {
     this.id = id;
-    this.username = name;
+    this.email = email;
   }
   
-  public static new(id: string, username: string): GetUserPreviewQueryResult {
-    return new GetUserPreviewQueryResult(id, username);
+  public static new(id: string, email: string): GetUserPreviewQueryResult {
+    return new GetUserPreviewQueryResult(id, email);
   }
   
 }

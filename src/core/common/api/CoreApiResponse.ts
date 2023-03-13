@@ -1,6 +1,9 @@
 import { Code } from '@core/common/code/Code';
 import { Nullable } from '@core/common/type/CommonTypes';
-
+import {
+  Req,
+  Res,
+} from '@nestjs/common';
 export class CoreApiResponse<TData> {
   public readonly code: number;
 
@@ -24,7 +27,6 @@ export class CoreApiResponse<TData> {
   ): CoreApiResponse<TData> {
     const resultCode: number = Code.SUCCESS.code;
     const resultMessage: string = message || Code.SUCCESS.message;
-
     return new CoreApiResponse(resultCode, resultMessage, data);
   }
 

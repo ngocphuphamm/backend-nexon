@@ -60,11 +60,19 @@ export class ToDo extends Entity<string> implements RemovableEntity {
     return this.user;
   }
 
+  public getPriority(): ToDoPriority {
+    return this.priority;
+  }
+
+  public getDescription(): string {
+    return this.description;
+  }
+  
   public getTitle(): string {
     return this.title;
   }
 
-  public getStatus(): string {
+  public getStatus(): ToDoStatus {
     return this.status;
   }
 
@@ -91,8 +99,6 @@ export class ToDo extends Entity<string> implements RemovableEntity {
     return toDo;
   }
 
-    
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  public async remove(): Promise<void> {
-  }
+  public async remove(): Promise<void> {}
 }

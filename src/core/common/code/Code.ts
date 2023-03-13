@@ -37,27 +37,27 @@ export class Code {
   };
 
   public static ENTITY_NOT_FOUND_ERROR: CodeDescription = {
-    code: 1000,
+    code: 404,
     message: 'Entity not found.',
   };
 
   public static ENTITY_VALIDATION_ERROR: CodeDescription = {
-    code: 1001,
+    code: 422,
     message: 'Entity validation error.',
   };
 
   public static USE_CASE_PORT_VALIDATION_ERROR: CodeDescription = {
-    code: 1002,
+    code: 422,
     message: 'Use-case port validation error.',
   };
 
   public static VALUE_OBJECT_VALIDATION_ERROR: CodeDescription = {
-    code: 1003,
+    code: 422,
     message: 'Value object validation error.',
   };
 
   public static ENTITY_ALREADY_EXISTS_ERROR: CodeDescription = {
-    code: 1004,
+    code: 409,
     message: 'Entity already exists.',
   };
 }

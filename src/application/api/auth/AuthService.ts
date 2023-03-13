@@ -125,8 +125,8 @@ export class AuthService {
   }
 
   private async isTokenBlacklisted(token: string): Promise<boolean> {
-    const isTokenBlacklisted = await this.redis.get(token);
-    if (isTokenBlacklisted) {
+    const tokenBlacklisted : string = await this.redis.get(token);
+    if (tokenBlacklisted === 'blacklisted') {
       throw Exception.new({
         code: Code.UNAUTHORIZED_ERROR,
         overrideMessage: 'Token in blacklist ',

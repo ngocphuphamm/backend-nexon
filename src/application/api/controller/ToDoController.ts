@@ -11,8 +11,11 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { Response } from 'express';
+import { ResponseException } from '@core/common/exception/ResponseException';
 
 import { HttpUser } from '@application/api/auth/decorator/HttpUser';
 import { JwtAuthGuard } from '@application/api/auth/guard/JwtAuthGuard';
@@ -25,6 +28,9 @@ import { CreateToDoUseCase } from '@core/domain/todo/usecase/CreateToDoUseCase';
 import { CreateToDoAdapter } from '@infrastructure/adapter/usecase/todo/CreateToDoAdapter';
 import { ToDoPriority } from '@core/common/enums/ToDoEnums';
 import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
+import { Code } from '@core/common/code/Code';
+import { Exception } from '@core/common/exception/Exception';
+
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 @ApiTags('todos')
@@ -41,23 +47,34 @@ export class ToDoController {
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToDo })
   public async createPost(
     @HttpUser() user: UserPayload,
-    @Body() body: CreateToDo
-  ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
+    @Body() body: CreateToDo,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<ToDoUseCaseDto>>> {
+    try {
+      if (body.startTime > body.endTime) {
+        throw Exception.new({
+          code: Code.BAD_REQUEST_ERROR,
+          overrideMessage: 'startTime < endTime ',
+        });
+      }
+      const adapter: CreateToDoAdapter = await CreateToDoAdapter.new({
+        executorId: user.id,
+        title: body.title,
+        description: body.description,
+        startTime: new Date(body.startTime),
+        endTime: new Date(body.endTime),
+        status: body.status,
+        priority: body.priority,
+      });
 
-    const adapter: CreateToDoAdapter = await CreateToDoAdapter.new({
-      executorId: user.id,
-      title: body.title,
-      description: body.description,
-      startTime:  new Date(body.startTime),
-      endTime: new Date(body.endTime),
-      status : body.status,
-      priority: body.priority
-    });
-
-    const createdToDo: ToDoUseCaseDto = await this.createToDoUseCase.execute(
-      adapter
-    );
-
-    return CoreApiResponse.success(createdToDo);
+      const createdToDo: ToDoUseCaseDto = await this.createToDoUseCase.execute(
+        adapter
+      );
+      return response
+        .status(Code.SUCCESS.code)
+        .json(CoreApiResponse.success(createdToDo));
+    } catch (err) {
+      return ResponseException(err, response);
+    }
   }
 }

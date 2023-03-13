@@ -20,7 +20,7 @@ export class HandleGetUserPreviewQueryService implements GetUserPreviewQueryHand
     if (user) {
       queryResult = GetUserPreviewQueryResult.new(
         user.getId(),
-        user.getUserName(),
+        user.getEmail(),
       );
     }
     return queryResult;
