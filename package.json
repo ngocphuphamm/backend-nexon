@@ -11,6 +11,7 @@
     "copy:local-env": "cp ./env/local.app.env ./dist/.env",
     "start": "node ./dist/Main.js",
     "start:local": "npm run copy:local-env && cd ./dist && node -r dotenv/config Main.js",
+    "start:prod": "npm run copy:prod-env && cd ./dist && node -r dotenv/config Main.js",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "test": "jest --config jest.json",
