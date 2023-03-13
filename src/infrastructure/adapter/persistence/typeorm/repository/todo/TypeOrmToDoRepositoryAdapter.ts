@@ -43,15 +43,13 @@ export class TypeOrmToDoRepositoryAdapter
     let domainEntity: Optional<ToDo>;
 
     const query: SelectQueryBuilder<TypeOrmToDo> = this.buildToDoQueryBuilder();
-
     this.extendQueryWithByProperties(by, query);
 
     const ormEntity: Optional<TypeOrmToDo> = await query.getOne();
-
     if (ormEntity) {
       domainEntity = TypeOrmToDoMapper.toDomainEntity(ormEntity);
     }
-
+    
     return domainEntity;
   }
 
