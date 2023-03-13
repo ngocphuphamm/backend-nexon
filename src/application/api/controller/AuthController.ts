@@ -77,13 +77,24 @@ export class AuthController {
           password,
         }))(body)
       );
+
       const createdUser: UserUseCaseDto = await this.createUserUseCase.execute(
         adapter
       );
 
+      const userResponse = (({
+        id,
+        username,
+        email,
+      }: UserUseCaseDto) => ({
+        id,
+        username,
+        email,
+      }))(createdUser);
+      
       return response
         .status(Code.SUCCESS.code)
-        .json(CoreApiResponse.success(createdUser));
+        .json(CoreApiResponse.success(userResponse));
     } catch (err) {
       return ResponseException(err, response);
     }

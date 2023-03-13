@@ -47,10 +47,18 @@ export class AuthService {
     };
   }
 
-  public async login(user: UserPayload): Promise<LoggedInUser> {
+  public async login(userLogin: UserPayload): Promise<LoggedInUser> {
+    const user: Optional<User> = await this.getUser({ id: userLogin.id });
+    if (!user)
+      throw Exception.new({
+        code: Code.BAD_REQUEST_ERROR,
+        overrideMessage: 'Invalid user',
+      });
+      
     const [accessToken, refreshToken] = await this.generateToken(user);
+
     return {
-      id: user.id,
+      id: userLogin.id,
       accessToken,
       refreshToken,
     };
@@ -108,8 +116,12 @@ export class AuthService {
     return this.userRepository.findUser(by);
   }
 
-  private async generateToken({ id, email }: UserPayload) {
-    const payload = { id: id, email: email };
+  private async generateToken(user: User) {
+    const payload = {
+      id: user.getId(),
+      email: user.getEmail(),
+      username: user.getUserName(),
+    };
     const accessToken = await this.jwtService.sign(payload);
     const refreshToken = await this.jwtService.sign(payload, {
       expiresIn: '7d',
@@ -117,7 +129,7 @@ export class AuthService {
     // Store the refresh token in Redis
     await this.redis.set(
       refreshToken,
-      id,
+      user.getId(),
       'PX',
       60 * 60 * 24 * 7 * 1000 + 60 * 15 * 1000 // TTL of 7 days and 15 minutes
     );
@@ -125,7 +137,7 @@ export class AuthService {
   }
 
   private async isTokenBlacklisted(token: string): Promise<boolean> {
-    const tokenBlacklisted : string = await this.redis.get(token);
+    const tokenBlacklisted: string = await this.redis.get(token);
     if (tokenBlacklisted === 'blacklisted') {
       throw Exception.new({
         code: Code.UNAUTHORIZED_ERROR,

@@ -6,6 +6,7 @@ import { TypeOrmToDoRepositoryAdapter } from '@infrastructure/adapter/persistenc
 import {ToDoController} from'@application/api/controller/ToDoController';
 import { CreaterToDoService } from '@core/service/todo/usecase/CreateToDoService';
 import { CoreDITokens } from '../../core/common/di/CoreDIToken';
+import { GetToDoService } from '../../core/service/todo/usecase/GetToDoService';
 
 const persistenceProviders: Provider[] = [
   {
@@ -21,6 +22,11 @@ const useCaseProviders: Provider[] = [
     provide   : ToDoDITokens.CreateToDoUseCase,
     useFactory: (toDoRepository, queryBus) => new CreaterToDoService(toDoRepository,queryBus),
     inject    : [ToDoDITokens.ToDoRepository,CoreDITokens.QueryBus]
+  },
+  {
+    provide   : ToDoDITokens.GetToDoUseCase,
+    useFactory: (toDoRepository) => new GetToDoService(toDoRepository),
+    inject    : [ToDoDITokens.ToDoRepository]
   },
 ];
 

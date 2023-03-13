@@ -26,10 +26,11 @@ import { CoreApiResponse } from '@core/common/api/CoreApiResponse';
 import { ToDoDITokens } from '@core/domain/todo/di/ToDoDITokens';
 import { CreateToDoUseCase } from '@core/domain/todo/usecase/CreateToDoUseCase';
 import { CreateToDoAdapter } from '@infrastructure/adapter/usecase/todo/CreateToDoAdapter';
-import { ToDoPriority } from '@core/common/enums/ToDoEnums';
 import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
 import { Code } from '@core/common/code/Code';
 import { Exception } from '@core/common/exception/Exception';
+import { GetToDoUseCase } from '@core/domain/todo/usecase/GetToDoUseCase';
+import { GetToDoAdapter } from '@infrastructure/adapter/usecase/todo/GetToDoAdapter';
 
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
@@ -37,7 +38,10 @@ import { Exception } from '@core/common/exception/Exception';
 export class ToDoController {
   constructor(
     @Inject(ToDoDITokens.CreateToDoUseCase)
-    private readonly createToDoUseCase: CreateToDoUseCase
+    private readonly createToDoUseCase: CreateToDoUseCase,
+
+    @Inject(ToDoDITokens.GetToDoUseCase)
+    private readonly getToDoUseCase: GetToDoUseCase
   ) {}
 
   @Post()
@@ -73,6 +77,29 @@ export class ToDoController {
       return response
         .status(Code.SUCCESS.code)
         .json(CoreApiResponse.success(createdToDo));
+    } catch (err) {
+      return ResponseException(err, response);
+    }
+  }
+
+  @Get(':toDoId')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseToDo })
+  public async getPost(
+    @HttpUser() user: UserPayload,
+    @Param('toDoId') toDoId: string,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<ToDoUseCaseDto>>> {
+    try {
+      const adapter: GetToDoAdapter = await GetToDoAdapter.new({
+        executorId: user.id,
+        toDoId: toDoId,
+      });
+      const toDo: ToDoUseCaseDto = await this.getToDoUseCase.execute(adapter);
+      return response
+        .status(Code.SUCCESS.code)
+        .json(CoreApiResponse.success(toDo));
     } catch (err) {
       return ResponseException(err, response);
     }
