@@ -62,7 +62,8 @@ if (ApiServerConfig.LOG_ENABLE) {
     }),
     RedisModule.forRoot({
       config: { 
-        url: 'redis://localhost:6379',
+        url: DatabaseConfig.REDIS_URL,
+        key: DatabaseConfig.REDIS_KEY
       },
     }),
   ],

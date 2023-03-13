@@ -20,4 +20,8 @@ export class DatabaseConfig {
   public static readonly REDIS_URL: string = get('REDIS_URL')
     .required()
     .asString();
+
+  public static readonly REDIS_KEY: string = get('REDIS_KEY')
+    .required()
+    .asString();
 }
