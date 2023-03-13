@@ -14,21 +14,21 @@ const persistenceProviders: Provider[] = [
   },
 ];
 
-const useCaseProviders: Provider[] = [
-  {
-    provide   : ToDoDITokens.CreateToDoUseCase,
-    // to do
-    useFactory: (toDoRepository) => new CreateToDoService(toDoRepository),
-    inject    : [ToDoDITokens.ToDoRepository]
-  },
-];
+// const useCaseProviders: Provider[] = [
+//   {
+//     provide   : ToDoDITokens.CreateToDoUseCase,
+//     // to do
+//     useFactory: (toDoRepository) => new CreateToDoService(toDoRepository),
+//     inject    : [ToDoDITokens.ToDoRepository]
+//   },
+// ];
 
 
 @Module({
   controllers: [ToDoController],
   providers: [
     ...persistenceProviders,
-    ...useCaseProviders
+    // ...useCaseProviders
   ],
 })
 export class ToDoModule {}

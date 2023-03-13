@@ -63,7 +63,7 @@ if (ApiServerConfig.LOG_ENABLE) {
     RedisModule.forRoot({
       config: { 
         url: DatabaseConfig.REDIS_URL,
-        key: DatabaseConfig.REDIS_KEY
+        password: DatabaseConfig.REDIS_KEY
       },
     }),
   ],
