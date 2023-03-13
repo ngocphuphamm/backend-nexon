@@ -35,6 +35,9 @@ import { EditToDoAdapter } from '@infrastructure/adapter/usecase/todo/EditToDoAd
 import { EditToDoBody } from '@application/api/controller/documentation/todo/EditToDoBody';
 import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
 import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
+import { RemoveToDoUseCase } from '@core/domain/todo/usecase/RemoveToDoUseCase';
+import { RemoveToDoAdapter } from '@infrastructure/adapter/usecase/todo/RemoveToDoAdapter';
+
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 @ApiTags('todos')
@@ -47,7 +50,10 @@ export class ToDoController {
     private readonly getToDoUseCase: GetToDoUseCase,
 
     @Inject(ToDoDITokens.EditToDoUseCase)
-    private readonly editToDoUseCase: EditToDoUseCase
+    private readonly editToDoUseCase: EditToDoUseCase,
+    // todo
+    @Inject(ToDoDITokens.RemoveToDoUseCase)
+    private readonly removeToDoUseCase: RemoveToDoUseCase,
   ) {}
 
   @Post()
@@ -121,7 +127,7 @@ export class ToDoController {
     @Body() body: EditToDoBody,
     @Param('toDoId') toDoId: string
   ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
-    
+
     const data: EditToDoPort = (({
       title,
       description,
@@ -147,4 +153,16 @@ export class ToDoController {
 
     return CoreApiResponse.success(editedToDo);
   }
+
+  @Delete(':toDoId')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiResponse({status: HttpStatus.OK})
+  public async removePost(@HttpUser() user: UserPayload, @Param('toDoId') toDoId: string): Promise<CoreApiResponse<void>> {
+    const adapter: RemoveToDoAdapter = await RemoveToDoAdapter.new({executorId: user.id, toDoId});
+    await this.removeToDoUseCase.execute(adapter);
+    
+    return CoreApiResponse.success();
+  }
+  
 }
