@@ -49,4 +49,9 @@ export class ToDoUseCaseDto {
 
     return dto;
   }
+
+  public static newListFromToDo(todos: ToDo[]): ToDoUseCaseDto[] {
+    return todos.map(todo => this.newFormToDo(todo));
+  }
 }
+
