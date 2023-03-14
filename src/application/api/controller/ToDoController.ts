@@ -1,4 +1,10 @@
-import { ApiTags, ApiBearerAuth, ApiBody, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiBody,
+  ApiResponse,
+  ApiQuery,
+} from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -22,21 +28,27 @@ import { JwtAuthGuard } from '@application/api/auth/guard/JwtAuthGuard';
 import { CreateToDo } from '@application/api/controller/documentation/todo/CreateToDo';
 import { ResponseToDo } from '@application/api/controller/documentation/todo/ResponseToDo';
 import { UserPayload } from '@application/api/auth/type/AuthTypes';
+import { EditToDoBody } from '@application/api/controller/documentation/todo/EditToDoBody';
+import { ResponseToDoList } from '@application/api/controller/documentation/todo/ResonseToDoList';
+import { GetToDoListQuery } from '@application/api/controller/documentation/todo/GetToDoListQuery';
+
+import { CreateToDoAdapter } from '@infrastructure/adapter/usecase/todo/CreateToDoAdapter';
+import { GetToDoAdapter } from '@infrastructure/adapter/usecase/todo/GetToDoAdapter';
+import { EditToDoAdapter } from '@infrastructure/adapter/usecase/todo/EditToDoAdapter';
+import { RemoveToDoAdapter } from '@infrastructure/adapter/usecase/todo/RemoveToDoAdapter';
+import { GetToDoListAdapter } from '@infrastructure/adapter/usecase/todo/GetToDoListAdapter';
+
 import { CoreApiResponse } from '@core/common/api/CoreApiResponse';
 import { ToDoDITokens } from '@core/domain/todo/di/ToDoDITokens';
 import { CreateToDoUseCase } from '@core/domain/todo/usecase/CreateToDoUseCase';
-import { CreateToDoAdapter } from '@infrastructure/adapter/usecase/todo/CreateToDoAdapter';
 import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
 import { Code } from '@core/common/code/Code';
 import { Exception } from '@core/common/exception/Exception';
 import { GetToDoUseCase } from '@core/domain/todo/usecase/GetToDoUseCase';
-import { GetToDoAdapter } from '@infrastructure/adapter/usecase/todo/GetToDoAdapter';
-import { EditToDoAdapter } from '@infrastructure/adapter/usecase/todo/EditToDoAdapter';
-import { EditToDoBody } from '@application/api/controller/documentation/todo/EditToDoBody';
 import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
 import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
 import { RemoveToDoUseCase } from '@core/domain/todo/usecase/RemoveToDoUseCase';
-import { RemoveToDoAdapter } from '@infrastructure/adapter/usecase/todo/RemoveToDoAdapter';
+import { GetToDoListUseCase } from '@core/domain/todo/usecase/GetToDoListUseCase';
 
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
@@ -54,6 +66,9 @@ export class ToDoController {
     // todo
     @Inject(ToDoDITokens.RemoveToDoUseCase)
     private readonly removeToDoUseCase: RemoveToDoUseCase,
+
+    @Inject(ToDoDITokens.GetToDoListUseCase)
+    private readonly getToDoListUseCase: GetToDoListUseCase
   ) {}
 
   @Post()
@@ -94,32 +109,27 @@ export class ToDoController {
     }
   }
 
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiQuery({ name: 'limit', type: 'number', required: false })
+  @ApiQuery({ name: 'page', type: 'number', required: false })
+  @ApiResponse({ status: HttpStatus.OK, type: ResponseToDoList })
+  public async getToDoList(
+    @HttpUser() user: UserPayload,
+    @Query() query: GetToDoListQuery
+  ): Promise<CoreApiResponse<ToDoUseCaseDto[]>> {
+    const adapter: GetToDoListAdapter = await GetToDoListAdapter.new({
+      executorId: user.id,
+      page: Number(query.page),
+      limit: Number(query.limit),
+    });
+    const todos: ToDoUseCaseDto[] = await this.getToDoListUseCase.execute(
+      adapter
+    );
 
-  // @Get()
-  // @HttpCode(HttpStatus.OK)
-  // @ApiBearerAuth()
-  // @ApiQuery({ name: 'limit', type: 'number', required: false })
-  // @ApiQuery({ name: 'page', type: 'number', required: false })
-  // @ApiResponse({status: HttpStatus.OK, type: HttpRestApiResponsePostList})
-  // public async getPostList(
-  //   @HttpUser() user: UserPayload,
-  //   @Query() query: HttpRestApiModelGetPostListQuery
-    
-  // ): Promise<CoreApiResponse<PostUseCaseDto[]>> {
-    
-  //   const adapter: GetPostListAdapter = await GetPostListAdapter.new({
-  //     executorId: user.id,
-  //     ownerId: query.authorId,
-  //     status: PostStatus.PUBLISHED
-  //   });
-  //   const posts: PostUseCaseDto[] = await this.getPostListUseCase.execute(adapter);
-  //   this.setFileStorageBasePath(posts);
-    
-  //   return CoreApiResponse.success(posts);
-  // }
-  
-
-  
+    return CoreApiResponse.success(todos);
+  }
 
   @Get(':toDoId')
   @HttpCode(HttpStatus.OK)
@@ -152,44 +162,58 @@ export class ToDoController {
   public async editToDo(
     @HttpUser() user: UserPayload,
     @Body() body: EditToDoBody,
-    @Param('toDoId') toDoId: string
-  ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
+    @Param('toDoId') toDoId: string,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<ToDoUseCaseDto>>> {
+    try {
+      const data: EditToDoPort = (({
+        title,
+        description,
+        startTime,
+        endTime,
+        status,
+        priority,
+      }: EditToDoBody) => ({
+        executorId: user.id,
+        toDoId,
+        title,
+        description,
+        startTime: startTime ? new Date(startTime) : undefined,
+        endTime: endTime ? new Date(endTime) : undefined,
+        status,
+        priority,
+      }))(body);
+      const adapter: EditToDoAdapter = await EditToDoAdapter.new(data);
 
-    const data: EditToDoPort = (({
-      title,
-      description,
-      startTime,
-      endTime,
-      status,
-      priority,
-    }: EditToDoBody) => ({
-      executorId: user.id,
-      toDoId,
-      title,
-      description,
-      startTime: startTime ? new Date(startTime) : undefined,
-      endTime: endTime ? new Date(endTime) : undefined,
-      status,
-      priority,
-    }))(body);
-    const adapter: EditToDoAdapter = await EditToDoAdapter.new(data);
-
-    const editedToDo: ToDoUseCaseDto = await this.editToDoUseCase.execute(
-      adapter
-    );
-
-    return CoreApiResponse.success(editedToDo);
+      const editedToDo: ToDoUseCaseDto = await this.editToDoUseCase.execute(
+        adapter
+      );
+      return response
+        .status(Code.SUCCESS.code)
+        .json(CoreApiResponse.success(editedToDo));
+    } catch (err) {
+      return ResponseException(err, response);
+    }
   }
 
   @Delete(':toDoId')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
-  @ApiResponse({status: HttpStatus.OK})
-  public async removeToDo(@HttpUser() user: UserPayload, @Param('toDoId') toDoId: string): Promise<CoreApiResponse<void>> {
-    const adapter: RemoveToDoAdapter = await RemoveToDoAdapter.new({executorId: user.id, toDoId});
-    await this.removeToDoUseCase.execute(adapter);
-    
-    return CoreApiResponse.success();
+  @ApiResponse({ status: HttpStatus.OK })
+  public async removeToDo(
+    @HttpUser() user: UserPayload,
+    @Param('toDoId') toDoId: string,
+    @Res() response: Response
+  ): Promise<Response<CoreApiResponse<void>>> {
+    try {
+      const adapter: RemoveToDoAdapter = await RemoveToDoAdapter.new({
+        executorId: user.id,
+        toDoId,
+      });
+      await this.removeToDoUseCase.execute(adapter);
+      return response.status(Code.SUCCESS.code).json(CoreApiResponse.success());
+    } catch (err) {
+      return ResponseException(err, response);
+    }
   }
-  
 }

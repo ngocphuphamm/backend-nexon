@@ -1,7 +1,7 @@
 export type RepositoryFindOptions = {
   includeRemoved?: boolean;
   limit?: number;
-  offset?: number;
+  page?: number;
 };
 
 export type RepositoryUpdateManyOptions = {

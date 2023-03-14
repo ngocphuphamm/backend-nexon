@@ -11,6 +11,7 @@ import { EditToDoService } from '@core/service/todo/usecase/EditToDoService';
 import { RemoveToDoUseCase } from '@core/domain/todo/usecase/RemoveToDoUseCase';
 import { RemoveToDoService } from '@core/service/todo/usecase/RemoveToDoService';
 import { TransactionalUseCaseWrapper } from '@infrastructure/transaction/TransactionalUseCaseWrapper';
+import { GetToDolistService } from '@core/service/todo/usecase/GetToDoListService';
 
 const persistenceProviders: Provider[] = [
   {
@@ -45,6 +46,11 @@ const useCaseProviders: Provider[] = [
       const service: RemoveToDoUseCase = new RemoveToDoService(toDoRepository);
       return new TransactionalUseCaseWrapper(service);
     },
+    inject    : [ToDoDITokens.ToDoRepository]
+  },
+  {
+    provide   : ToDoDITokens.GetToDoListUseCase,
+    useFactory: (postRepository) => new GetToDolistService(postRepository),
     inject    : [ToDoDITokens.ToDoRepository]
   },
 ];

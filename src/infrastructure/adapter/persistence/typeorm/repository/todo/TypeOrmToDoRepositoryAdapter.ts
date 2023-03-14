@@ -6,12 +6,13 @@ import { ToDoRepositoryPort } from '@core/domain/todo/port/persistence/ToDoRepos
 import { ToDo } from '@core/domain/todo/entity/ToDo';
 import { TypeOrmToDoMapper } from '@infrastructure/adapter/persistence/typeorm/entity/todo/mapper/TypeOrmToDoMapper';
 import { RepositoryFindOptions } from '@core/common/persistence/RepositoryOptions';
-import { Optional } from '../../../../../../core/common/type/CommonTypes';
-import { TypeOrmUser } from '../../entity/user/TypeOrmUser';
 import {
-  ToDoStatus,
-  ToDoPriority,
-} from '../../../../../../core/common/enums/ToDoEnums';
+  Optional,
+  Pagination,
+} from '../../../../../../core/common/type/CommonTypes';
+import { TypeOrmUser } from '../../entity/user/TypeOrmUser';
+import { pagination } from '../../../../../../core/common/utils/helper/Pagination';
+import { ToDoStatus, ToDoPriority } from '@core/common/enums/ToDoEnums';
 
 @EntityRepository(TypeOrmToDo)
 export class TypeOrmToDoRepositoryAdapter
@@ -51,6 +52,23 @@ export class TypeOrmToDoRepositoryAdapter
     }
 
     return domainEntity;
+  }
+
+  public async findToDos(
+    by: { userId?: string },
+    options: RepositoryFindOptions = {}
+  ): Promise<ToDo[]> {
+    const query: SelectQueryBuilder<TypeOrmToDo> = this.buildToDoQueryBuilder();
+
+    this.extendQueryWithByProperties(by, query);
+
+    const { skip, take }: Pagination = await pagination(options);
+    query.skip(skip).take(take);
+
+    const ormToDos: TypeOrmToDo[] = await query.getMany();
+    const domainToDos: ToDo[] = TypeOrmToDoMapper.toDomainEntities(ormToDos);
+
+    return domainToDos;
   }
 
   public async updateToDo(toDo: ToDo): Promise<void> {
