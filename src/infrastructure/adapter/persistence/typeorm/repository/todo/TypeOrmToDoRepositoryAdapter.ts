@@ -43,16 +43,26 @@ export class TypeOrmToDoRepositoryAdapter
     let domainEntity: Optional<ToDo>;
 
     const query: SelectQueryBuilder<TypeOrmToDo> = this.buildToDoQueryBuilder();
-
     this.extendQueryWithByProperties(by, query);
 
     const ormEntity: Optional<TypeOrmToDo> = await query.getOne();
-
     if (ormEntity) {
       domainEntity = TypeOrmToDoMapper.toDomainEntity(ormEntity);
     }
 
     return domainEntity;
+  }
+
+  public async updateToDo(toDo: ToDo): Promise<void> {
+    const ormToDo: TypeOrmToDo = TypeOrmToDoMapper.toOrmEntity(toDo);
+    await this.update(ormToDo.id, ormToDo);
+  }
+
+  public async removeToDo(toDo: ToDo): Promise<void> {
+    await toDo.remove();
+    const ormToDo: TypeOrmToDo = TypeOrmToDoMapper.toOrmEntity(toDo);
+
+    await this.delete(ormToDo);
   }
 
   private buildToDoQueryBuilder(): SelectQueryBuilder<TypeOrmToDo> {
@@ -97,11 +107,5 @@ export class TypeOrmToDoRepositoryAdapter
     default:
       break;
     }
-  }
-
-    
-  public async updateToDo(toDo: ToDo): Promise<void>{
-    const ormToDo: TypeOrmToDo = TypeOrmToDoMapper.toOrmEntity(toDo);
-    await this.update(ormToDo.id, ormToDo);
   }
 }

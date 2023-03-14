@@ -1,4 +1,4 @@
-import { ApiTags, ApiBearerAuth, ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiBody, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -35,6 +35,9 @@ import { EditToDoAdapter } from '@infrastructure/adapter/usecase/todo/EditToDoAd
 import { EditToDoBody } from '@application/api/controller/documentation/todo/EditToDoBody';
 import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
 import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
+import { RemoveToDoUseCase } from '@core/domain/todo/usecase/RemoveToDoUseCase';
+import { RemoveToDoAdapter } from '@infrastructure/adapter/usecase/todo/RemoveToDoAdapter';
+
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 @ApiTags('todos')
@@ -47,7 +50,10 @@ export class ToDoController {
     private readonly getToDoUseCase: GetToDoUseCase,
 
     @Inject(ToDoDITokens.EditToDoUseCase)
-    private readonly editToDoUseCase: EditToDoUseCase
+    private readonly editToDoUseCase: EditToDoUseCase,
+    // todo
+    @Inject(ToDoDITokens.RemoveToDoUseCase)
+    private readonly removeToDoUseCase: RemoveToDoUseCase,
   ) {}
 
   @Post()
@@ -55,7 +61,7 @@ export class ToDoController {
   @ApiBearerAuth()
   @ApiBody({ type: CreateToDo })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToDo })
-  public async createPost(
+  public async createToDo(
     @HttpUser() user: UserPayload,
     @Body() body: CreateToDo,
     @Res() response: Response
@@ -88,11 +94,38 @@ export class ToDoController {
     }
   }
 
+
+  // @Get()
+  // @HttpCode(HttpStatus.OK)
+  // @ApiBearerAuth()
+  // @ApiQuery({ name: 'limit', type: 'number', required: false })
+  // @ApiQuery({ name: 'page', type: 'number', required: false })
+  // @ApiResponse({status: HttpStatus.OK, type: HttpRestApiResponsePostList})
+  // public async getPostList(
+  //   @HttpUser() user: UserPayload,
+  //   @Query() query: HttpRestApiModelGetPostListQuery
+    
+  // ): Promise<CoreApiResponse<PostUseCaseDto[]>> {
+    
+  //   const adapter: GetPostListAdapter = await GetPostListAdapter.new({
+  //     executorId: user.id,
+  //     ownerId: query.authorId,
+  //     status: PostStatus.PUBLISHED
+  //   });
+  //   const posts: PostUseCaseDto[] = await this.getPostListUseCase.execute(adapter);
+  //   this.setFileStorageBasePath(posts);
+    
+  //   return CoreApiResponse.success(posts);
+  // }
+  
+
+  
+
   @Get(':toDoId')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToDo })
-  public async getPost(
+  public async getToDo(
     @HttpUser() user: UserPayload,
     @Param('toDoId') toDoId: string,
     @Res() response: Response
@@ -116,11 +149,12 @@ export class ToDoController {
   @ApiBearerAuth()
   @ApiBody({ type: EditToDoBody })
   @ApiResponse({ status: HttpStatus.OK, type: EditToDoBody })
-  public async editPost(
+  public async editToDo(
     @HttpUser() user: UserPayload,
     @Body() body: EditToDoBody,
     @Param('toDoId') toDoId: string
   ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
+
     const data: EditToDoPort = (({
       title,
       description,
@@ -146,4 +180,16 @@ export class ToDoController {
 
     return CoreApiResponse.success(editedToDo);
   }
+
+  @Delete(':toDoId')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth()
+  @ApiResponse({status: HttpStatus.OK})
+  public async removeToDo(@HttpUser() user: UserPayload, @Param('toDoId') toDoId: string): Promise<CoreApiResponse<void>> {
+    const adapter: RemoveToDoAdapter = await RemoveToDoAdapter.new({executorId: user.id, toDoId});
+    await this.removeToDoUseCase.execute(adapter);
+    
+    return CoreApiResponse.success();
+  }
+  
 }

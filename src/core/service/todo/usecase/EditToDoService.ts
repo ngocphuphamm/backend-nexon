@@ -20,11 +20,6 @@ export class EditToDoService implements EditToDoUseCase {
   ) {}
 
   public async execute(payload: EditToDoPort): Promise<ToDoUseCaseDto> {
-    console.log('payload');
-    console.log(payload);
-    const todo = await this.toDoRepository.findToDo({ id: payload.toDoId });
-    console.log('todo');
-    console.log(todo);
     const toDo: ToDo = CoreAssert.notEmpty(
       await this.toDoRepository.findToDo({ id: payload.toDoId }),
       Exception.new({

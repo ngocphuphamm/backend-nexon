@@ -8,6 +8,9 @@ import { CreaterToDoService } from '@core/service/todo/usecase/CreateToDoService
 import { CoreDITokens } from '@core/common/di/CoreDIToken';
 import { GetToDoService } from '@core/service/todo/usecase/GetToDoService';
 import { EditToDoService } from '@core/service/todo/usecase/EditToDoService';
+import { RemoveToDoUseCase } from '@core/domain/todo/usecase/RemoveToDoUseCase';
+import { RemoveToDoService } from '@core/service/todo/usecase/RemoveToDoService';
+import { TransactionalUseCaseWrapper } from '@infrastructure/transaction/TransactionalUseCaseWrapper';
 
 const persistenceProviders: Provider[] = [
   {
@@ -35,6 +38,14 @@ const useCaseProviders: Provider[] = [
     useFactory: (toDoRepository, queryBus) =>
       new EditToDoService(toDoRepository, queryBus),
     inject: [ToDoDITokens.ToDoRepository],
+  },
+  {
+    provide   : ToDoDITokens.RemoveToDoUseCase,
+    useFactory: (toDoRepository) => {
+      const service: RemoveToDoUseCase = new RemoveToDoService(toDoRepository);
+      return new TransactionalUseCaseWrapper(service);
+    },
+    inject    : [ToDoDITokens.ToDoRepository]
   },
 ];
 

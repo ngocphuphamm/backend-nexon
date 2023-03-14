@@ -81,7 +81,7 @@ export class ToDo extends Entity<string> implements RemovableEntity {
     this.user = payload.user;
     this.title = payload.title;
     this.description = payload.description;
-    this.id = v4();
+    this.id = payload.id || v4();
     this.status = payload.status || ToDoStatus.TODO;
     this.priority = payload.priority || ToDoPriority.LOW;
     this.startTime = payload.startTime;
@@ -138,27 +138,26 @@ export class ToDo extends Entity<string> implements RemovableEntity {
     switch (true) {
     case Boolean(payload.title):
       this.title = payload.title!;
-      break;
+    
     case Boolean(payload.description):
       this.description = payload.description!;
-      break;
+      
     case Boolean(payload.startTime):
       this.startTime = payload.startTime!;
-      break;
+      
     case Boolean(payload.endTime):
       this.endTime = payload.endTime!;
-      break;
+      
     case Boolean(payload.priority):
       this.priority = payload.priority!;
-      break;
+      
     case Boolean(payload.status):
       this.status = payload.status!;
-      break;
+      
     default:
-        // default behavior if none of the cases match
+      // default behavior if none of the cases match
     }
-
-    console.log(this);
+    this.updatedAt = currentDate;
     await this.validate();
   }
 

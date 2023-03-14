@@ -10,6 +10,7 @@ export type RequestWithUser = Request & { user: UserPayload };
 export type JwtPayload = {
   id: string;
   email: string;
+  username:string;
 };
 
 export type LoggedInUser = {
