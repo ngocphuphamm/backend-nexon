@@ -61,7 +61,7 @@ export class ToDoController {
   @ApiBearerAuth()
   @ApiBody({ type: CreateToDo })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToDo })
-  public async createPost(
+  public async createToDo(
     @HttpUser() user: UserPayload,
     @Body() body: CreateToDo,
     @Res() response: Response
@@ -94,11 +94,14 @@ export class ToDoController {
     }
   }
 
+
+  
+
   @Get(':toDoId')
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToDo })
-  public async getPost(
+  public async getToDo(
     @HttpUser() user: UserPayload,
     @Param('toDoId') toDoId: string,
     @Res() response: Response
@@ -158,7 +161,7 @@ export class ToDoController {
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   @ApiResponse({status: HttpStatus.OK})
-  public async removePost(@HttpUser() user: UserPayload, @Param('toDoId') toDoId: string): Promise<CoreApiResponse<void>> {
+  public async removeToDo(@HttpUser() user: UserPayload, @Param('toDoId') toDoId: string): Promise<CoreApiResponse<void>> {
     const adapter: RemoveToDoAdapter = await RemoveToDoAdapter.new({executorId: user.id, toDoId});
     await this.removeToDoUseCase.execute(adapter);
     
