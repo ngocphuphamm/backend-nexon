@@ -122,7 +122,7 @@ export class ToDoController {
   @ApiBearerAuth()
   @ApiBody({ type: EditToDoBody })
   @ApiResponse({ status: HttpStatus.OK, type: EditToDoBody })
-  public async editPost(
+  public async editToDo(
     @HttpUser() user: UserPayload,
     @Body() body: EditToDoBody,
     @Param('toDoId') toDoId: string

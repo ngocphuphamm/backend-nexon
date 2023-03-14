@@ -6,7 +6,6 @@ export class ToDoDITokens{
   public static readonly EditToDoUseCase: unique symbol    = Symbol('EditToDoUseCase');
   public static readonly GetToDoListUseCase: unique symbol = Symbol('GetToDotListUseCase');
   public static readonly GetToDoUseCase: unique symbol     = Symbol('GetToDotUseCase');
-  public static readonly PublishToDoUseCase: unique symbol = Symbol('PublishToDoUseCase');
   public static readonly RemoveToDoUseCase: unique symbol  = Symbol('RemoveToDoUseCase');
   
   // Handlers
