@@ -49,6 +49,7 @@
     "jest-sonar-reporter": "2.0.0",
     "jsonwebtoken": "9.0.0",
     "npm-check-updates": "16.7.9",
+    "passport-headerapikey": "^1.2.2",
     "supertest": "6.3.3",
     "ts-jest": "29.0.5",
     "ts-node": "10.9.1",

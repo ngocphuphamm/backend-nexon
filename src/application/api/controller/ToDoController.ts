@@ -31,6 +31,7 @@ import { UserPayload } from '@application/api/auth/type/AuthTypes';
 import { EditToDoBody } from '@application/api/controller/documentation/todo/EditToDoBody';
 import { ResponseToDoList } from '@application/api/controller/documentation/todo/ResonseToDoList';
 import { GetToDoListQuery } from '@application/api/controller/documentation/todo/GetToDoListQuery';
+import { ApiKeyAuthGuard } from '@application/api/auth/guard/ApiKeyAuthGuard';
 
 import { CreateToDoAdapter } from '@infrastructure/adapter/usecase/todo/CreateToDoAdapter';
 import { GetToDoAdapter } from '@infrastructure/adapter/usecase/todo/GetToDoAdapter';
@@ -50,6 +51,7 @@ import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
 import { RemoveToDoUseCase } from '@core/domain/todo/usecase/RemoveToDoUseCase';
 import { GetToDoListUseCase } from '@core/domain/todo/usecase/GetToDoListUseCase';
 
+@UseGuards(ApiKeyAuthGuard)
 @UseGuards(JwtAuthGuard)
 @Controller('todos')
 @ApiTags('todos')
