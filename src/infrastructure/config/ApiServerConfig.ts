@@ -8,31 +8,31 @@ export class ApiServerConfig {
     .asPortNumber();
 
   public static readonly ACCESS_TOKEN_SECRET: string = get(
-    'API_ACCESS_TOKEN_SECRET',
+    'API_ACCESS_TOKEN_SECRET'
   )
     .required()
     .asString();
 
   public static readonly ACCESS_TOKEN_TTL_IN_MINUTES: number = get(
-    'API_ACCESS_TOKEN_TTL_IN_MINUTES',
+    'API_ACCESS_TOKEN_TTL_IN_MINUTES'
   )
     .required()
     .asInt();
 
   public static readonly ACCESS_TOKEN_HEADER: string = get(
-    'API_ACCESS_TOKEN_HEADER',
+    'API_ACCESS_TOKEN_HEADER'
   )
     .required()
     .asString();
 
   public static readonly LOGIN_USERNAME_FIELD: string = get(
-    'API_LOGIN_USERNAME_FIELD',
+    'API_LOGIN_USERNAME_FIELD'
   )
     .required()
     .asString();
 
   public static readonly LOGIN_PASSWORD_FIELD: string = get(
-    'API_LOGIN_PASSWORD_FIELD',
+    'API_LOGIN_PASSWORD_FIELD'
   )
     .required()
     .asString();
@@ -40,4 +40,11 @@ export class ApiServerConfig {
   public static readonly LOG_ENABLE: boolean = get('API_LOG_ENABLE')
     .required()
     .asBool();
+
+  public static readonly API_LIMIT_NUMBER: number = get('API_LIMIT_NUMBER')
+    .required()
+    .asInt();
+  public static readonly API_DURATION_NUMBER: number = get('API_DURATION_NUMBER')
+    .required()
+    .asInt();
 }

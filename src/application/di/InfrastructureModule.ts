@@ -1,4 +1,9 @@
-import { Global, Module, OnApplicationBootstrap, Provider } from '@nestjs/common';
+import {
+  Global,
+  Module,
+  OnApplicationBootstrap,
+  Provider,
+} from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,11 +19,12 @@ import { NestQueryBusAdapter } from '@infrastructure/adapter/mesage/NestQueryBus
 import { TypeOrmDirectory } from '@infrastructure/adapter/persistence/typeorm/TypeOrmDirectory';
 import { ApiServerConfig } from '@infrastructure/config/ApiServerConfig';
 import { DatabaseConfig } from '@infrastructure/config/DatabaseConfig';
-
+import { APP_GUARD } from '@nestjs/core';
+import { RateLimiterModule, RateLimiterGuard } from 'nestjs-rate-limiter';
 
 const providers: Provider[] = [
   {
-    provide : APP_FILTER,
+    provide: APP_FILTER,
     useClass: NestHttpExceptionFilter,
   },
   {
@@ -32,12 +38,16 @@ const providers: Provider[] = [
   {
     provide: CoreDITokens.EventBus,
     useClass: NestEventBusAdapter,
-  }
+  },
+  {
+    provide: APP_GUARD,
+    useClass: RateLimiterGuard,
+  },
 ];
 
 if (ApiServerConfig.LOG_ENABLE) {
   providers.push({
-    provide : APP_INTERCEPTOR,
+    provide: APP_INTERCEPTOR,
     useClass: NestHttpLoggingInterceptor,
   });
 }
@@ -46,20 +56,24 @@ if (ApiServerConfig.LOG_ENABLE) {
 @Module({
   imports: [
     CqrsModule,
+    RateLimiterModule.register({
+      points: ApiServerConfig.API_LIMIT_NUMBER, // number of points
+      duration: ApiServerConfig.API_DURATION_NUMBER, // time window in seconds
+    }),
     TypeOrmModule.forRoot({
-      type                     : 'mysql',
-      host                     : DatabaseConfig.DB_HOST,
-      port                     : DatabaseConfig.DB_PORT,
-      username                 : DatabaseConfig.DB_USERNAME,
-      password                 : DatabaseConfig.DB_PASSWORD,
-      database                 : DatabaseConfig.DB_NAME,
-      entities                 : [`${TypeOrmDirectory}/entity/**/*{.ts,.js}`],
+      type: 'mysql',
+      host: DatabaseConfig.DB_HOST,
+      port: DatabaseConfig.DB_PORT,
+      username: DatabaseConfig.DB_USERNAME,
+      password: DatabaseConfig.DB_PASSWORD,
+      database: DatabaseConfig.DB_NAME,
+      entities: [`${TypeOrmDirectory}/entity/**/*{.ts,.js}`],
       synchronize: true,
     }),
     RedisModule.forRoot({
-      config: { 
+      config: {
         url: DatabaseConfig.REDIS_URL,
-        password: DatabaseConfig.REDIS_KEY
+        password: DatabaseConfig.REDIS_KEY,
       },
     }),
   ],
@@ -68,7 +82,7 @@ if (ApiServerConfig.LOG_ENABLE) {
     CoreDITokens.CommandBus,
     CoreDITokens.QueryBus,
     CoreDITokens.EventBus,
-  ]
+  ],
 })
 export class InfrastructureModule implements OnApplicationBootstrap {
   onApplicationBootstrap(): void {
