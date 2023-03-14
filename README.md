@@ -1,5 +1,14 @@
 # To Do List
 
+## Running
+
+```
+Start application - npm run start
+
+Expose ./env/local.app.env and start application - npm run start:local
+
+API documentation will be available on the endpoint GET http://localhost:3002/documentation
+```
 ## Database
 
 ### MySql
