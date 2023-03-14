@@ -19,9 +19,7 @@
     "lib:check": "ncu",
     "lib:upgrade": "ncu -u && npm install",
     "lint": "eslint '{src,test}/**/*.ts'",
-    "lint:fix": "eslint --fix '{src,test}/**/*.ts'",
-    "migration:create": "node --require ts-node/register ./node_modules/typeorm/cli.js migration:create -n",
-    "migration:revert": "node --require ts-node/register ./node_modules/typeorm/cli.js migration:revert"
+    "lint:fix": "eslint --fix '{src,test}/**/*.ts'"
   },
   "devDependencies": {
     "@nestjs-modules/ioredis": "^1.0.1",
@@ -32,8 +30,6 @@
     "@types/cookie-parser": "^1.4.3",
     "@types/express": "4.17.17",
     "@types/ioredis": "^5.0.0",
-    "@types/jest": "29.4.0",
-    "@types/minio": "7.0.15",
     "@types/passport-jwt": "3.0.8",
     "@types/passport-local": "1.0.35",
     "@types/supertest": "2.0.12",
@@ -48,6 +44,7 @@
     "jest-junit": "15.0.0",
     "jest-sonar-reporter": "2.0.0",
     "jsonwebtoken": "9.0.0",
+    "nestjs-rate-limiter": "^3.1.0",
     "npm-check-updates": "16.7.9",
     "passport-headerapikey": "^1.2.2",
     "supertest": "6.3.3",

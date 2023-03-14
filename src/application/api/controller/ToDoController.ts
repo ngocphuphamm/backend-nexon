@@ -17,11 +17,8 @@ import {
   Post,
   Put,
   Query,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { ResponseException } from '@core/common/exception/ResponseException';
 
 import { HttpUser } from '@application/api/auth/decorator/HttpUser';
 import { JwtAuthGuard } from '@application/api/auth/guard/JwtAuthGuard';
@@ -43,8 +40,6 @@ import { CoreApiResponse } from '@core/common/api/CoreApiResponse';
 import { ToDoDITokens } from '@core/domain/todo/di/ToDoDITokens';
 import { CreateToDoUseCase } from '@core/domain/todo/usecase/CreateToDoUseCase';
 import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
-import { Code } from '@core/common/code/Code';
-import { Exception } from '@core/common/exception/Exception';
 import { GetToDoUseCase } from '@core/domain/todo/usecase/GetToDoUseCase';
 import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
 import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
@@ -80,42 +75,29 @@ export class ToDoController {
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToDo })
   public async createToDo(
     @HttpUser() user: UserPayload,
-    @Body() body: CreateToDo,
-    @Res() response: Response
-  ): Promise<Response<CoreApiResponse<ToDoUseCaseDto>>> {
-    try {
-      if (body.startTime > body.endTime) {
-        throw Exception.new({
-          code: Code.BAD_REQUEST_ERROR,
-          overrideMessage: 'startTime < endTime ',
-        });
-      }
-      const adapter: CreateToDoAdapter = await CreateToDoAdapter.new({
-        executorId: user.id,
-        title: body.title,
-        description: body.description,
-        startTime: new Date(body.startTime),
-        endTime: new Date(body.endTime),
-        status: body.status,
-        priority: body.priority,
-      });
+    @Body() body: CreateToDo
+  ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
+    const adapter: CreateToDoAdapter = await CreateToDoAdapter.new({
+      executorId: user.id,
+      title: body.title,
+      description: body.description,
+      startTime: new Date(body.startTime),
+      endTime: new Date(body.endTime),
+      status: body.status,
+      priority: body.priority,
+    });
 
-      const createdToDo: ToDoUseCaseDto = await this.createToDoUseCase.execute(
-        adapter
-      );
-      return response
-        .status(Code.SUCCESS.code)
-        .json(CoreApiResponse.success(createdToDo));
-    } catch (err) {
-      return ResponseException(err, response);
-    }
+    const createdToDo: ToDoUseCaseDto = await this.createToDoUseCase.execute(
+      adapter
+    );
+    return CoreApiResponse.success(createdToDo);
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
-  @ApiQuery({ name: 'limit', type: 'number', required: false })
-  @ApiQuery({ name: 'page', type: 'number', required: false })
+  @ApiQuery({ name: 'limit', type: 'number', required: true })
+  @ApiQuery({ name: 'page', type: 'number', required: true })
   @ApiResponse({ status: HttpStatus.OK, type: ResponseToDoList })
   public async getToDoList(
     @HttpUser() user: UserPayload,
@@ -140,20 +122,13 @@ export class ToDoController {
   public async getToDo(
     @HttpUser() user: UserPayload,
     @Param('toDoId') toDoId: string,
-    @Res() response: Response
-  ): Promise<Response<CoreApiResponse<ToDoUseCaseDto>>> {
-    try {
-      const adapter: GetToDoAdapter = await GetToDoAdapter.new({
-        executorId: user.id,
-        toDoId: toDoId,
-      });
-      const toDo: ToDoUseCaseDto = await this.getToDoUseCase.execute(adapter);
-      return response
-        .status(Code.SUCCESS.code)
-        .json(CoreApiResponse.success(toDo));
-    } catch (err) {
-      return ResponseException(err, response);
-    }
+  ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
+    const adapter: GetToDoAdapter = await GetToDoAdapter.new({
+      executorId: user.id,
+      toDoId: toDoId,
+    });
+    const toDo: ToDoUseCaseDto = await this.getToDoUseCase.execute(adapter);
+    return CoreApiResponse.success(toDo);
   }
 
   @Put(':toDoId')
@@ -164,38 +139,31 @@ export class ToDoController {
   public async editToDo(
     @HttpUser() user: UserPayload,
     @Body() body: EditToDoBody,
-    @Param('toDoId') toDoId: string,
-    @Res() response: Response
-  ): Promise<Response<CoreApiResponse<ToDoUseCaseDto>>> {
-    try {
-      const data: EditToDoPort = (({
-        title,
-        description,
-        startTime,
-        endTime,
-        status,
-        priority,
-      }: EditToDoBody) => ({
-        executorId: user.id,
-        toDoId,
-        title,
-        description,
-        startTime: startTime ? new Date(startTime) : undefined,
-        endTime: endTime ? new Date(endTime) : undefined,
-        status,
-        priority,
-      }))(body);
-      const adapter: EditToDoAdapter = await EditToDoAdapter.new(data);
+    @Param('toDoId') toDoId: string
+  ): Promise<CoreApiResponse<ToDoUseCaseDto>> {
+    const data: EditToDoPort = (({
+      title,
+      description,
+      startTime,
+      endTime,
+      status,
+      priority,
+    }: EditToDoBody) => ({
+      executorId: user.id,
+      toDoId,
+      title,
+      description,
+      startTime: startTime ? new Date(startTime) : undefined,
+      endTime: endTime ? new Date(endTime) : undefined,
+      status,
+      priority,
+    }))(body);
+    const adapter: EditToDoAdapter = await EditToDoAdapter.new(data);
 
-      const editedToDo: ToDoUseCaseDto = await this.editToDoUseCase.execute(
-        adapter
-      );
-      return response
-        .status(Code.SUCCESS.code)
-        .json(CoreApiResponse.success(editedToDo));
-    } catch (err) {
-      return ResponseException(err, response);
-    }
+    const editedToDo: ToDoUseCaseDto = await this.editToDoUseCase.execute(
+      adapter
+    );
+    return CoreApiResponse.success(editedToDo);
   }
 
   @Delete(':toDoId')
@@ -204,18 +172,13 @@ export class ToDoController {
   @ApiResponse({ status: HttpStatus.OK })
   public async removeToDo(
     @HttpUser() user: UserPayload,
-    @Param('toDoId') toDoId: string,
-    @Res() response: Response
-  ): Promise<Response<CoreApiResponse<void>>> {
-    try {
-      const adapter: RemoveToDoAdapter = await RemoveToDoAdapter.new({
-        executorId: user.id,
-        toDoId,
-      });
-      await this.removeToDoUseCase.execute(adapter);
-      return response.status(Code.SUCCESS.code).json(CoreApiResponse.success());
-    } catch (err) {
-      return ResponseException(err, response);
-    }
+    @Param('toDoId') toDoId: string
+  ): Promise<CoreApiResponse<void>> {
+    const adapter: RemoveToDoAdapter = await RemoveToDoAdapter.new({
+      executorId: user.id,
+      toDoId,
+    });
+    await this.removeToDoUseCase.execute(adapter);
+    return CoreApiResponse.success();
   }
 }
