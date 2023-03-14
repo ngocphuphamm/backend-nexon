@@ -34,7 +34,7 @@ export class TypeOrmUserRepositoryAdapter
   }
 
   public async countUsers(
-    by: { id?: string; name?: string },
+    by: { id?: string; email?: string },
     options: RepositoryFindOptions = {}
   ): Promise<number> {
     const query: SelectQueryBuilder<TypeOrmUser> = this.buildUserQueryBuilder();

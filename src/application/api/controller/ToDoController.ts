@@ -95,28 +95,28 @@ export class ToDoController {
   }
 
 
-  @Get()
-  @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth()
-  @ApiQuery({ name: 'limit', type: 'number', required: false })
-  @ApiQuery({ name: 'page', type: 'number', required: false })
-  @ApiResponse({status: HttpStatus.OK, type: HttpRestApiResponsePostList})
-  public async getPostList(
-    @HttpUser() user: UserPayload,
-    @Query() query: HttpRestApiModelGetPostListQuery
+  // @Get()
+  // @HttpCode(HttpStatus.OK)
+  // @ApiBearerAuth()
+  // @ApiQuery({ name: 'limit', type: 'number', required: false })
+  // @ApiQuery({ name: 'page', type: 'number', required: false })
+  // @ApiResponse({status: HttpStatus.OK, type: HttpRestApiResponsePostList})
+  // public async getPostList(
+  //   @HttpUser() user: UserPayload,
+  //   @Query() query: HttpRestApiModelGetPostListQuery
     
-  ): Promise<CoreApiResponse<PostUseCaseDto[]>> {
+  // ): Promise<CoreApiResponse<PostUseCaseDto[]>> {
     
-    const adapter: GetPostListAdapter = await GetPostListAdapter.new({
-      executorId: user.id,
-      ownerId: query.authorId,
-      status: PostStatus.PUBLISHED
-    });
-    const posts: PostUseCaseDto[] = await this.getPostListUseCase.execute(adapter);
-    this.setFileStorageBasePath(posts);
+  //   const adapter: GetPostListAdapter = await GetPostListAdapter.new({
+  //     executorId: user.id,
+  //     ownerId: query.authorId,
+  //     status: PostStatus.PUBLISHED
+  //   });
+  //   const posts: PostUseCaseDto[] = await this.getPostListUseCase.execute(adapter);
+  //   this.setFileStorageBasePath(posts);
     
-    return CoreApiResponse.success(posts);
-  }
+  //   return CoreApiResponse.success(posts);
+  // }
   
 
   
