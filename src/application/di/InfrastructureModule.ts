@@ -11,7 +11,6 @@ import { CoreDITokens } from '@core/common/di/CoreDIToken';
 import { NestCommandBusAdapter } from '@infrastructure/adapter/mesage/NestCommandBusAdapter';
 import { NestEventBusAdapter } from '@infrastructure/adapter/mesage/NestEventBusAdapter';
 import { NestQueryBusAdapter } from '@infrastructure/adapter/mesage/NestQueryBusAdapter';
-import { TypeOrmLogger } from '@infrastructure/adapter/persistence/typeorm/logger/TypeOrmLogger';
 import { TypeOrmDirectory } from '@infrastructure/adapter/persistence/typeorm/TypeOrmDirectory';
 import { ApiServerConfig } from '@infrastructure/config/ApiServerConfig';
 import { DatabaseConfig } from '@infrastructure/config/DatabaseConfig';
@@ -55,9 +54,6 @@ if (ApiServerConfig.LOG_ENABLE) {
       password                 : DatabaseConfig.DB_PASSWORD,
       database                 : DatabaseConfig.DB_NAME,
       entities                 : [`${TypeOrmDirectory}/entity/**/*{.ts,.js}`],
-      // migrationsRun            : true,
-      // migrations               : [`${TypeOrmDirectory}/migration/**/*{.ts,.js}`],
-      // migrationsTransactionMode: 'all',
       synchronize: true,
     }),
     RedisModule.forRoot({

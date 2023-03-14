@@ -21,7 +21,6 @@ export class NestHttpExceptionFilter implements ExceptionFilter {
       Code.INTERNAL_ERROR.code,
       error.message
     );
-
     errorResponse = this.handleNestError(error, errorResponse);
     errorResponse = this.handleCoreException(error, errorResponse);
 
