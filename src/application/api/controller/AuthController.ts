@@ -27,10 +27,13 @@ import { RefreshTokenBody } from '@application/api/controller/documentation/auth
 import { ResponseToken } from '@application/api/controller/documentation/auth/ResponseToken';
 import { ResponseLogout } from './documentation/auth/Logout';
 import { JwtAuthGuard } from '@application/api/auth/guard/JwtAuthGuard';
-import { Response, response } from 'express';
-import { Code } from '../../../core/common/code/Code';
-import { Exception } from '../../../core/common/exception/Exception';
-import { ResponseException } from '../../../core/common/exception/ResponseException';
+import { Response } from 'express';
+import { Code } from '@core/common/code/Code';
+import { ResponseException } from '@core/common/exception/ResponseException';
+import { ApiKeyAuthGuard } from '@application/api/auth/guard/ApiKeyAuthGuard';
+
+
+@UseGuards(ApiKeyAuthGuard)
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {

@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 import {
-  JwtPayload,
   LoggedInUser,
   UserPayload,
 } from '@application/api/auth/type/AuthTypes';
@@ -14,6 +13,9 @@ import { UserRepositoryPort } from '@core/domain/user/port/persistence/UserRepos
 import { CoreAssert } from '@core/common/utils/assert/CoreAssert';
 import { Exception } from '@core/common/exception/Exception';
 import { Code } from '@core/common/code/Code';
+import { ApiKeyDITokens } from '@core/domain/apiKey/di/ApiKeyDITokens';
+import { ApiKeyRepositoryPort } from '@core/domain/apiKey/port/persistence/ApiKeyRepositoryPort';
+import { ApiKey } from '@core/domain/apiKey/entity/ApiKey';
 
 @Injectable()
 export class AuthService {
@@ -24,8 +26,16 @@ export class AuthService {
     @InjectRedis()
     private readonly redis: Redis,
 
+    @Inject(ApiKeyDITokens.ApiKeyRepository)
+    private readonly apiKeyRepository: ApiKeyRepositoryPort,
+
     private readonly jwtService: JwtService
   ) {}
+  
+
+  public async getApiKey(by: { keyValue: string }): Promise<Optional<ApiKey>> {
+    return this.apiKeyRepository.findApiKey(by);
+  }
 
   public async validateUser(
     email: string,

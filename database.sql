@@ -25,12 +25,12 @@ CREATE TABLE users (
 );
 
 CREATE TABLE apiKeys (
-  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  id CHAR(36) NOT NULL,
   keyValue VARCHAR(255) NOT NULL,
   version VARCHAR(50) NOT NULL,
-  permissions ENUM('GENERAL', 'VIP') NOT NULL,
+  permissions ENUM('general', 'vip') NOT NULL,
   comments TEXT,
-  status ENUM('ACTIVE', 'INACTIVE') NOT NULL,
+  status ENUM('active', 'inactive') NOT NULL,
   createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -41,6 +41,10 @@ ADD PRIMARY KEY (id);
 
 -- add primary key to users table
 ALTER TABLE users
+ADD PRIMARY KEY (id);
+
+-- add primary key to apiKeys table
+ALTER TABLE apiKeys
 ADD PRIMARY KEY (id);
 
 -- add foreign key constraint to todos table
@@ -81,6 +85,11 @@ END IF;
 END//
 
 DELIMITER ;
+
+
+
+INSERT INTO apiKeys (id, keyValue, version, permissions, comments, status) 
+VALUES (UUID(),'GCMUDiuY5a7WvyUNt9n3QztToSHzK7Uj', '1.0.0', 'general', 'To be used by the high3ar.club vendor', 'active');
 
 
 

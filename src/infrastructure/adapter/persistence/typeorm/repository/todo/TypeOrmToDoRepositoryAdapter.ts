@@ -36,7 +36,7 @@ export class TypeOrmToDoRepositoryAdapter
       id: insertResult.identifiers[0].id,
     };
   }
-
+  
   public async findToDo(
     by: { id?: string },
     options: RepositoryFindOptions = {}
