@@ -22,4 +22,9 @@ export interface ToDoRepositoryPort {
   updateToDo(toDo: ToDo): Promise<void>;
 
   removeToDo(toDo: ToDo): Promise<void>;
+
+  countToDosOfUser(
+    by: { id?: string },
+    options?: RepositoryFindOptions
+  ): Promise<number>;
 }

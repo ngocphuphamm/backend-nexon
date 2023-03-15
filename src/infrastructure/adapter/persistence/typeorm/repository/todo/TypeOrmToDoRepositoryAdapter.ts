@@ -35,6 +35,18 @@ export class TypeOrmToDoRepositoryAdapter
     };
   }
 
+
+  public async countToDosOfUser(
+    by: { id?: string},
+    options: RepositoryFindOptions = {}
+  ): Promise<number> {
+    const query: SelectQueryBuilder<TypeOrmToDo> = this.buildToDoQueryBuilder();
+
+    this.extendQueryWithByProperties(by, query);
+
+    return query.getCount();
+  }
+
   public async findToDo(
     by: { id?: string },
     options: RepositoryFindOptions = {}

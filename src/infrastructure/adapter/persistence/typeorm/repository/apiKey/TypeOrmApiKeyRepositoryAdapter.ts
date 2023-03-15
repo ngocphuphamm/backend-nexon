@@ -3,7 +3,7 @@ import {  EntityRepository, SelectQueryBuilder } from 'typeorm';
 
 import { TypeOrmApiKey } from '@infrastructure/adapter/persistence/typeorm/entity/apikey/TypeOrmApiKey'
 import { TypeOrmApiKeyMapper } from '@infrastructure/adapter/persistence/typeorm/entity/apikey/mapper/TypeOrmApiKeyMapper';
-;
+
 import { ApiKeyRepositoryPort } from '@core/domain/apiKey/port/persistence/ApiKeyRepositoryPort';
 import { ApiKey } from '@core/domain/apiKey/entity/ApiKey';
 import { RepositoryFindOptions } from '@core/common/persistence/RepositoryOptions';
