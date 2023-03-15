@@ -101,7 +101,8 @@ export class TypeOrmToDoRepositoryAdapter
         TypeOrmUser,
         'user',
         `${this.toDoAlias}.userId = user.id`
-      );
+      )
+      .orderBy(`${this.toDoAlias}.createdAt`, 'ASC');
   }
 
   private extendQueryWithByProperties(
@@ -131,4 +132,6 @@ export class TypeOrmToDoRepositoryAdapter
       break;
     }
   }
+
+
 }
