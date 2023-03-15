@@ -31,7 +31,6 @@ export class AuthService {
 
     private readonly jwtService: JwtService
   ) {}
-  
 
   public async getApiKey(by: { keyValue: string }): Promise<Optional<ApiKey>> {
     return this.apiKeyRepository.findApiKey(by);
@@ -64,7 +63,7 @@ export class AuthService {
         code: Code.BAD_REQUEST_ERROR,
         overrideMessage: 'Invalid user',
       });
-      
+
     const [accessToken, refreshToken] = await this.generateToken(user);
 
     return {
@@ -115,10 +114,11 @@ export class AuthService {
   public async logout(refreshToken: string): Promise<void> {
     const blacklisted = await this.isTokenBlacklisted(refreshToken);
     if (!blacklisted) {
-      await this.redis.set(refreshToken, 'blacklisted');
-      await this.redis.expire(
+      await this.redis.set(
         refreshToken,
-        60 * 60 * 24 * 7 * 1000 + 60 * 15 * 1000 // TTL of 7 days and 15 minutes
+        'blacklisted',
+        'PX',
+        60 * 60 * 24 * 7 * 1000 + 60 * 15 * 1000 // TTL of 7 days and 15 minutes);
       );
     }
   }
