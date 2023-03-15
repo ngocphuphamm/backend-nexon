@@ -1,11 +1,6 @@
 # To Do List
 
 
-## DEMO
-```
-https://www.postman.com/minhcuongdevelopment/workspace/backend-todo/overview
-http://194.163.180.21/api/v1
-```
 ## Running
 
 ```
