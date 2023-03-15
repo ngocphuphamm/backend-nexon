@@ -45,9 +45,9 @@ import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
 import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
 import { RemoveToDoUseCase } from '@core/domain/todo/usecase/RemoveToDoUseCase';
 import { GetToDoListUseCase } from '@core/domain/todo/usecase/GetToDoListUseCase';
-
-@UseGuards(ApiKeyAuthGuard)
+import { ToDoListPaginationDto } from '../../../core/domain/todo/usecase/dto/ToDoListPaginationDto';
 @UseGuards(JwtAuthGuard)
+@UseGuards(ApiKeyAuthGuard)
 @Controller('todos')
 @ApiTags('todos')
 export class ToDoController {
@@ -102,13 +102,13 @@ export class ToDoController {
   public async getToDoList(
     @HttpUser() user: UserPayload,
     @Query() query: GetToDoListQuery
-  ): Promise<CoreApiResponse<ToDoUseCaseDto[]>> {
+  ): Promise<CoreApiResponse<ToDoListPaginationDto>> {
     const adapter: GetToDoListAdapter = await GetToDoListAdapter.new({
       executorId: user.id,
       page: Number(query.page),
       limit: Number(query.limit),
     });
-    const todos: ToDoUseCaseDto[] = await this.getToDoListUseCase.execute(
+    const todos: ToDoListPaginationDto = await this.getToDoListUseCase.execute(
       adapter
     );
 

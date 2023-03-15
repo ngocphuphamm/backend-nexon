@@ -3,21 +3,37 @@ import { ToDoRepositoryPort } from '@core/domain/todo/port/persistence/ToDoRepos
 import { GetToDoListPort } from '@core/domain/todo/port/usecase/GetToDoListPort';
 import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
 import { ToDo } from '@core/domain/todo/entity/ToDo';
+import { ToDoListPaginationDto } from '@core/domain/todo/usecase/dto/ToDoListPaginationDto';
 
 export class GetToDolistService implements GetToDoListUseCase {
   constructor(private readonly toDoRepository: ToDoRepositoryPort) {}
 
-  public async execute(payload: GetToDoListPort): Promise<ToDoUseCaseDto[]> {
+  public async execute({
+    limit,
+    page,
+    executorId,
+  }: GetToDoListPort): Promise<ToDoListPaginationDto> {
     const todos: ToDo[] = await this.toDoRepository.findToDos(
       {
-        userId: payload.executorId,
+        userId: executorId,
       },
       {
-        limit: payload.limit,
-        page: payload.page,
+        limit: limit,
+        page: page,
       }
     );
-     
-    return ToDoUseCaseDto.newListFromToDo(todos);
+    const sumToDo: number = await this.toDoRepository.countToDosOfUser({
+      userId: executorId,
+    });
+    const toDoUseCaseDto: ToDoUseCaseDto[] =
+      ToDoUseCaseDto.newListFromToDo(todos);
+    return {
+      pagination: {
+        page: page,
+        limit: limit,
+        sumPage: Math.ceil(sumToDo / limit),
+      },
+      listToDo: toDoUseCaseDto,
+    };
   }
 }

@@ -21,9 +21,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   public async validate(payload: JwtPayload): Promise<UserPayload> {
     const user: User = CoreAssert.notEmpty(
       await this.authService.getUser({ id: payload.id }),
-      Exception.new({ code: Code.UNAUTHORIZED_ERROR }),
+      Exception.new({ code: Code.UNAUTHORIZED_ERROR })
     );
-
     return {
       id: user.getId(),
       email: user.getEmail(),

@@ -11,6 +11,7 @@ export class GetUserService implements GetUserUseCase {
   constructor(private readonly userRepository: UserRepositoryPort) {}
 
   public async execute(payload: GetUserPort): Promise<UserUseCaseDto> {
+
     const user: Optional<User> = await this.userRepository.findUser({
       id: payload.userId,
     });

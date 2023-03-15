@@ -29,7 +29,6 @@ export class TypeOrmUserMapper {
       createdAt: ormUser.createdAt,
       updatedAt: ormUser.updatedAt || null,
     });
-
     return domainUser;
   }
 

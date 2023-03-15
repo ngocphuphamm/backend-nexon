@@ -5,9 +5,6 @@ import {
   IsString,
   IsDate,
   ValidateIf,
-  registerDecorator,
-  ValidationOptions,
-  ValidationArguments,
 } from 'class-validator';
 
 import { UseCaseValidatableAdapter } from '@core/common/adapter/usecase/UseCaseValidatableAdapter';

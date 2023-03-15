@@ -17,6 +17,7 @@ export class HandleGetUserPreviewQueryService implements GetUserPreviewQueryHand
       query.by,
       query.options,
     );
+
     if (user) {
       queryResult = GetUserPreviewQueryResult.new(
         user.getId(),

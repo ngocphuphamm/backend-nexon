@@ -37,7 +37,7 @@ export class TypeOrmToDoRepositoryAdapter
 
 
   public async countToDosOfUser(
-    by: { id?: string},
+    by: { userId?: string},
     options: RepositoryFindOptions = {}
   ): Promise<number> {
     const query: SelectQueryBuilder<TypeOrmToDo> = this.buildToDoQueryBuilder();

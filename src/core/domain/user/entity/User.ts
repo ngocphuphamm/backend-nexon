@@ -24,7 +24,6 @@ export class User extends Entity<string> {
 
   constructor(payload: CreateUserEntityPayload) {
     super();
-
     this.id = payload.id || v4();
     this.username = payload.username;
     this.email = payload.email;

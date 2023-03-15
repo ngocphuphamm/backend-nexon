@@ -21,7 +21,6 @@ export class TypeOrmUserRepositoryAdapter
     let domainEntity: Optional<User>;
 
     const query: SelectQueryBuilder<TypeOrmUser> = this.buildUserQueryBuilder();
-
     this.extendQueryWithByProperties(by, query);
 
     const ormEntity: Optional<TypeOrmUser | null> = await query.getOne();
@@ -29,7 +28,6 @@ export class TypeOrmUserRepositoryAdapter
     if (ormEntity) {
       domainEntity = TypeOrmUserMapper.toDomainEntity(ormEntity);
     }
-
     return domainEntity;
   }
 

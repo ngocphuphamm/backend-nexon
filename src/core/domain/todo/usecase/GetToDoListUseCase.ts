@@ -1,4 +1,4 @@
 import { TransactionalUseCase } from '@core/common/usecase/TransactionalUseCase';
-import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
 import { GetToDoListPort } from '@core/domain/todo/port/usecase/GetToDoListPort';
-export interface GetToDoListUseCase extends TransactionalUseCase<GetToDoListPort, ToDoUseCaseDto[]> {}
+import { ToDoListPaginationDto } from './dto/ToDoListPaginationDto';
+export interface GetToDoListUseCase extends TransactionalUseCase<GetToDoListPort, ToDoListPaginationDto> {}
