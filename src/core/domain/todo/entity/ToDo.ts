@@ -2,7 +2,6 @@ import {
   IsDate,
   IsEnum,
   IsInstance,
-  IsOptional,
   IsString,
 } from 'class-validator';
 import { v4 } from 'uuid';
@@ -12,7 +11,7 @@ import { RemovableEntity } from '@core/common/entity/RemoveableEntity';
 import { ToDoUser } from '@core/domain/todo/entity/ToDoUser';
 import { ToDoPriority, ToDoStatus } from '@core/common/enums/ToDoEnums';
 import { CreateToDorEntityPayload } from '@core/domain/todo/entity/type/CreateToDoEntityPayload';
-import { EditToDoEntityPayload } from './type/EditToDoEntityPayload';
+import { EditToDoEntityPayload } from '@core/domain/todo/entity/type/EditToDoEntityPayload';
 import {
   registerDecorator,
   ValidationOptions,

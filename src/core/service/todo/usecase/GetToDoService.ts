@@ -5,7 +5,7 @@ import { ToDoRepositoryPort } from '@core/domain/todo/port/persistence/ToDoRepos
 import { GetToDoPort } from '@core/domain/todo/port/usecase/GetToDoPort';
 import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
 import { ToDo } from '@core/domain/todo/entity/ToDo';
-import { CoreAssert } from '../../../common/utils/assert/CoreAssert';
+import { CoreAssert } from '@core/common/utils/assert/CoreAssert';
 export class GetToDoService implements GetToDoUseCase {
   constructor(private readonly toDoRepository: ToDoRepositoryPort) {}
 

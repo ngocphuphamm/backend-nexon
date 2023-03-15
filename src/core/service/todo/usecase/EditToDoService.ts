@@ -1,17 +1,12 @@
 import { Code } from '@core/common/code/Code';
-import { CreateToDoUseCase } from '@core/domain/todo/usecase/CreateToDoUseCase';
 import { ToDoRepositoryPort } from '@core/domain/todo/port/persistence/ToDoRepositoryPort';
 import { QueryBusPort } from '@core/common/port/message/QueryBusPort';
-import { CreateToDoPort } from '@core/domain/todo/port/usecase/CreateToDoPort';
 import { ToDoUseCaseDto } from '@core/domain/todo/usecase/dto/ToDoUseCaseDto';
-import { GetUserPreviewQuery } from '@core/common/message/query/queries/user/GetUserPreviewQuery';
 import { CoreAssert } from '@core/common/utils/assert/CoreAssert';
 import { Exception } from '@core/common/exception/Exception';
 import { ToDo } from '@core/domain/todo/entity/ToDo';
-import { ToDoUser } from '@core/domain/todo/entity/ToDoUser';
-import { GetUserPreviewQueryResult } from '@core/common/message/query/queries/user/result/GetUserPreviewQueryResult';
-import { EditToDoUseCase } from '../../../domain/todo/usecase/EditToDoUseCase';
-import { EditToDoPort } from '../../../domain/todo/port/usecase/EditToDoPort';
+import { EditToDoUseCase } from '@core/domain/todo/usecase/EditToDoUseCase';
+import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
 
 export class EditToDoService implements EditToDoUseCase {
   constructor(

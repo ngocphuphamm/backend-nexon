@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { CoreApiResponse } from '../api/CoreApiResponse';
+import { CoreApiResponse } from '@core/common/api/CoreApiResponse';
 import { Code } from '@core/common/code/Code';
 export const ResponseException = (error: any, response: Response) => {
   if (error.code !== 500) {

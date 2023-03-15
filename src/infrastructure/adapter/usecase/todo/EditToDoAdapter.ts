@@ -1,6 +1,7 @@
-import { UseCaseValidatableAdapter } from '@core/common/adapter/usecase/UseCaseValidatableAdapter';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
 import { IsOptional, IsString, IsUUID, IsDate } from 'class-validator';
+
+import { UseCaseValidatableAdapter } from '@core/common/adapter/usecase/UseCaseValidatableAdapter';
 import { ToDoStatus, ToDoPriority } from '@core/common/enums/ToDoEnums';
 import { EditToDoPort } from '@core/domain/todo/port/usecase/EditToDoPort';
 

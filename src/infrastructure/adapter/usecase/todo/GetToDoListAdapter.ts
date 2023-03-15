@@ -1,7 +1,9 @@
-import { UseCaseValidatableAdapter } from '@core/common/adapter/usecase/UseCaseValidatableAdapter';
-import { GetToDoListPort } from '@core/domain/todo/port/usecase/GetToDoListPort';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
 import { IsUUID, IsNumber } from 'class-validator';
+
+import { UseCaseValidatableAdapter } from '@core/common/adapter/usecase/UseCaseValidatableAdapter';
+import { GetToDoListPort } from '@core/domain/todo/port/usecase/GetToDoListPort';
+
 
 @Exclude()
 export class GetToDoListAdapter

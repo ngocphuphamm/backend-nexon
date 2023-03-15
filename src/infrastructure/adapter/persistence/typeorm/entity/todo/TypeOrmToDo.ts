@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { ToDoStatus, ToDoPriority } from '@core/common/enums/ToDoEnums';
 
 @Entity('todos')

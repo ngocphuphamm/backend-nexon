@@ -2,16 +2,14 @@ import { BaseRepository } from 'typeorm-transactional-cls-hooked';
 import { InsertResult, EntityRepository, SelectQueryBuilder } from 'typeorm';
 
 import { TypeOrmToDo } from '@infrastructure/adapter/persistence/typeorm/entity/todo/TypeOrmToDo';
+import { TypeOrmUser } from '@infrastructure/adapter/persistence/typeorm/entity/user/TypeOrmUser';
+
 import { ToDoRepositoryPort } from '@core/domain/todo/port/persistence/ToDoRepositoryPort';
 import { ToDo } from '@core/domain/todo/entity/ToDo';
 import { TypeOrmToDoMapper } from '@infrastructure/adapter/persistence/typeorm/entity/todo/mapper/TypeOrmToDoMapper';
 import { RepositoryFindOptions } from '@core/common/persistence/RepositoryOptions';
-import {
-  Optional,
-  Pagination,
-} from '../../../../../../core/common/type/CommonTypes';
-import { TypeOrmUser } from '../../entity/user/TypeOrmUser';
-import { pagination } from '../../../../../../core/common/utils/helper/Pagination';
+import { Optional, Pagination } from '@core/common/type/CommonTypes';
+import { pagination } from '@core/common/utils/helper/Pagination';
 import { ToDoStatus, ToDoPriority } from '@core/common/enums/ToDoEnums';
 
 @EntityRepository(TypeOrmToDo)
@@ -36,7 +34,7 @@ export class TypeOrmToDoRepositoryAdapter
       id: insertResult.identifiers[0].id,
     };
   }
-  
+
   public async findToDo(
     by: { id?: string },
     options: RepositoryFindOptions = {}
@@ -110,11 +108,6 @@ export class TypeOrmToDoRepositoryAdapter
     case Boolean(by.userId):
       query.andWhere(`${this.toDoAlias}.userId = :userId`, {
         userId: by.userId,
-      });
-      break;
-    case Boolean(by.status):
-      query.andWhere(`${this.toDoAlias}.status = :status`, {
-        status: by.status,
       });
       break;
     case Boolean(by.priority):

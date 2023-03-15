@@ -1,7 +1,8 @@
-import { UseCaseValidatableAdapter } from '@core/common/adapter/usecase/UseCaseValidatableAdapter';
-import { RemoveToDoPort } from '@core/domain/todo/port/usecase/RemoveToDoPort';
 import { Exclude, Expose, plainToClass } from 'class-transformer';
 import { IsUUID } from 'class-validator';
+
+import { UseCaseValidatableAdapter } from '@core/common/adapter/usecase/UseCaseValidatableAdapter';
+import { RemoveToDoPort } from '@core/domain/todo/port/usecase/RemoveToDoPort';
 
 @Exclude()
 export class RemoveToDoAdapter extends UseCaseValidatableAdapter implements RemoveToDoPort {

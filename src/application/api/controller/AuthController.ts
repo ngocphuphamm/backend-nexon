@@ -24,10 +24,10 @@ import { CreateUserUseCase } from '@core/domain/user/usecase/CreateUserUseCase';
 import { UserDITokens } from '@core/domain/user/di/UserDIToken';
 import { RefreshTokenBody } from '@application/api/controller/documentation/auth/RefreshToken';
 import { ResponseToken } from '@application/api/controller/documentation/auth/ResponseToken';
-import { ResponseLogout } from './documentation/auth/Logout';
+import { ResponseLogout } from '@application/api/controller/documentation/auth/Logout';
 import { JwtAuthGuard } from '@application/api/auth/guard/JwtAuthGuard';
 import { ApiKeyAuthGuard } from '@application/api/auth/guard/ApiKeyAuthGuard';
-import { ResponseRegisterBody } from './documentation/auth/ReponseRegisterBody';
+import { ResponseRegisterBody } from '@application/api/controller/documentation/auth/ReponseRegisterBody';
 
 @UseGuards(ApiKeyAuthGuard)
 @Controller('auth')
