@@ -102,7 +102,7 @@ export class TypeOrmToDoRepositoryAdapter
         'user',
         `${this.toDoAlias}.userId = user.id`
       )
-      .orderBy(`${this.toDoAlias}.createdAt`, 'ASC');
+      .orderBy(`${this.toDoAlias}.createdAt`, 'DESC');
   }
 
   private extendQueryWithByProperties(
