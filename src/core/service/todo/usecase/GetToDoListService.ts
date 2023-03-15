@@ -27,11 +27,12 @@ export class GetToDolistService implements GetToDoListUseCase {
     });
     const toDoUseCaseDto: ToDoUseCaseDto[] =
       ToDoUseCaseDto.newListFromToDo(todos);
+    const sum = Math.ceil(sumToDo / limit);
     return {
       pagination: {
         page: page,
         limit: limit,
-        sumPage: Math.ceil(sumToDo / limit),
+        sumPage: sum > 0 ? sum : 1,
       },
       listToDo: toDoUseCaseDto,
     };
